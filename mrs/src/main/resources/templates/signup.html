@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>회원가입 - 무비리뷰</title>
+        <link rel="stylesheet" th:href="@{/main.css}">
+        <link rel="stylesheet" th:href="@{/auth.css}">
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    </head>
+    <body class="auth-body">
+    <header class="auth-header">
+        <div class="container">
+            <div class="logo">
+                <h1><a th:href="@{/}">무비리뷰</a></h1>
+            </div>
+            <nav class="auth-nav">
+                <a th:href="@{/}">홈으로</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="auth-main">
+        <div class="auth-container">
+            <div class="auth-card register-card">
+                <div class="auth-header-content">
+                    <h2>회원가입</h2>
+                    <p>무비리뷰 커뮤니티에 참여하세요!</p>
+                </div>
+
+                <!-- 전체 에러 메시지 -->
+                <div th:if="${error}" class="alert alert-error">
+                    <span th:text="${error}">회원가입 중 오류가 발생했습니다.</span>
+                </div>
+
+                <form th:action="@{/adduser}"
+                      th:object="${userInfo}"
+                      method="post"
+                      class="auth-form">
+
+                    <!-- 회원가입 성공 모달 -->
+                    <div th:if="${success}" id="successModal" class="modal-overlay">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3>🎉 회원가입 완료!</h3>
+                            </div>
+                            <div class="modal-body">
+                                <p>회원가입이 완료되었습니다!</p>
+                                <p>로그인 페이지로 이동하여 로그인해주세요.</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" onclick="goToLogin()">확인</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="username">ID</label>
+                        <input type="text"
+                               id="userId"
+                               th:field="*{userId}"
+                               placeholder="ID를 입력하세요"
+                               th:classappend="${#fields.hasErrors('userId')} ? 'error' : ''"
+                               required>
+                        <div th:if="${#fields.hasErrors('userId')}" class="field-error">
+                            <span th:errors="*{userId}">ID 오류</span>
+                        </div>
+                        <small class="form-help">3-20자, 영문자, 숫자만 사용 가능</small>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="userName">이름</label>
+                            <input type="text"
+                                   id="userName"
+                                   th:field="*{userName}"
+                                   placeholder="이름을 입력하세요"
+                                   th:classappend="${#fields.hasErrors('userName')} ? 'error' : ''"
+                                   required>
+                            <div th:if="${#fields.hasErrors('userName')}" class="field-error">
+                                <span th:errors="*{userName}">이름 오류</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">이메일</label>
+                        <input type="email"
+                               id="email"
+                               th:field="*{userEmail}"
+                               placeholder="이메일을 입력하세요"
+                               th:classappend="${#fields.hasErrors('userEmail')} ? 'error' : ''"
+                               required>
+                        <div th:if="${#fields.hasErrors('userEmail')}" class="field-error">
+                            <span th:errors="*{userEmail}">이메일 오류</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">비밀번호</label>
+                        <input type="password"
+                               id="password"
+                               th:field="*{userPassword}"
+                               placeholder="비밀번호를 입력하세요"
+                               th:classappend="${#fields.hasErrors('userPassword')} ? 'error' : ''"
+                               required>
+                        <div th:if="${#fields.hasErrors('userPassword')}" class="field-error">
+                            <span th:errors="*{userPassword}">비밀번호 오류</span>
+                        </div>
+                        <small class="form-help">최소 8자, 대소문자, 숫자, 특수문자 포함</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">비밀번호 확인</label>
+                        <input type="password"
+                               id="confirmPassword"
+                               th:field="*{confirmPassword}"
+                               placeholder="비밀번호를 다시 입력하세요"
+                               th:classappend="${#fields.hasErrors('confirmPassword')} ? 'error' : ''"
+                               required>
+                        <div th:if="${#fields.hasErrors('confirmPassword')}" class="field-error">
+                            <span th:errors="*{confirmPassword}">비밀번호 확인 오류</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-full">회원가입</button>
+                </form>
+
+                <div class="auth-footer">
+                    <p>이미 계정이 있으신가요? <a th:href="@{/login}">로그인</a></p>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function goToLogin() {
+                window.location.href = '/login';
+            }
+
+            // 모달이 있으면 자동으로 표시
+            document.addEventListener('DOMContentLoaded', function() {
+                const modal = document.getElementById('successModal');
+                if (modal) {
+                    modal.style.display = 'flex';
+                }
+            });
+        </script>
+    </main>
+
+    <footer class="auth-footer-section">
+        <div class="container">
+            <p>&copy; 2025 Spring Boot Project</p>
+        </div>
+    </footer>
+
+    </body>
+</html>

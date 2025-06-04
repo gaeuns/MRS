@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>로그인 - 무비리뷰</title>
+        <link rel="stylesheet" th:href="@{/main.css}">
+        <link rel="stylesheet" th:href="@{/auth.css}">
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    </head>
+    <body class="auth-body">
+    <header class="auth-header">
+        <div class="container">
+            <div class="logo">
+                <h1><a th:href="@{/}">무비리뷰</a></h1>
+            </div>
+            <nav class="auth-nav">
+                <a th:href="@{/}">홈으로</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="auth-main">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header-content">
+                    <h2>로그인</h2>
+                    <p>무비리뷰에 오신 것을 환영합니다!</p>
+                </div>
+
+                <!-- 에러 메시지 표시 -->
+                <div th:if="${error}" class="alert alert-error">
+                    <span th:text="${error}">로그인에 실패했습니다.</span>
+                </div>
+
+                <!-- 로그아웃 메시지 표시 -->
+                <div th:if="${logout}" class="alert alert-success">
+                    <span>성공적으로 로그아웃되었습니다.</span>
+                </div>
+
+                <form th:action="@{/login}" th:object="${userInfo}" method="post" class="auth-form">
+                    <div class="form-group">
+                        <label for="userId">ID</label>
+                        <input type="text"
+                               id="userId"
+                               name="userId"
+                               th:field="*{userId}"
+                               placeholder="ID를 입력하세요"
+                               required>
+                        <div th:if="${#fields.hasErrors('userId')}" class="field-error">
+                            <span th:errors="*{userId}">존재하지 않는 ID입니다.</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">비밀번호</label>
+                        <input type="password"
+                               id="password"
+                               th:field="*{userPassword}"
+                               placeholder="비밀번호를 입력하세요"
+                               required>
+                        <div th:if="${#fields.hasErrors('userPassword')}" class="field-error">
+                            <span th:errors="*{userPassword}">잘못된 비밀번호입니다.</span>
+                        </div>
+                    </div>
+
+                    <div class="form-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="remember-me">
+                            <span class="checkmark"></span>
+                            로그인 상태 유지
+                        </label>
+                        <a th:href="@{/forgot-password}" class="forgot-password">비밀번호를 잊으셨나요?</a>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-full">로그인</button>
+                </form>
+
+                <div class="auth-footer">
+                    <p>아직 계정이 없으신가요? <a th:href="@{/signup}">회원가입</a></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="auth-footer-section">
+        <div class="container">
+            <p>&copy; 2025 Spring Boot Project</p>
+        </div>
+    </footer>
+
+    </body>
+</html>
