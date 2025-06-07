@@ -1,7 +1,8 @@
-package com.example.mrs.Controller;
+package com.example.mrs.controller;
 
-import com.example.mrs.Entity.User;
-import com.example.mrs.Repository.UserRepository;
+import com.example.mrs.entity.User;
+import com.example.mrs.repository.UserRepository;
+import com.example.mrs.dto.UserDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +17,10 @@ import java.util.Objects;
 
 @Controller
 @RequiredArgsConstructor
-public class MemberController {
+public class UserController {
     private final UserRepository userRepository;
 
+    //회원가입
     @GetMapping("/signup")
     public String signup(Model model) {
         model.addAttribute("userInfo", new User());
@@ -38,13 +40,14 @@ public class MemberController {
             return "signup";
         }
 
-        user.setUserPassword(user.getUserPassword());
+        //user.setUserPassword(user.getUserPassword());
         userRepository.save(user);
 
         model.addAttribute("success", true);
         return "login";
     }
 
+    //로그인
     @GetMapping("/login")
     public String login(Model model) {
         model.addAttribute("userInfo", new User());
@@ -53,29 +56,22 @@ public class MemberController {
 
     @PostMapping("/login")
     public String postMain(@ModelAttribute("userInfo") User user, BindingResult result, HttpSession session) {
-        if (userRepository.findByUserId(user.getUserId()).isEmpty()) {
+        var dbUser = userRepository.findByUserId(user.getUserId()).orElse(null);
+
+        if (dbUser == null) {
             result.rejectValue("userId", "error.userId", "존재하지 않는 ID입니당당당.");
             return "login";
         }
 
-        var dbUser = userRepository.findByUserId(user.getUserId()).get();
-
-        // 🔐 비밀번호 비교 (암호화된 비밀번호와 입력값 비교)
         if (!Objects.equals(user.getUserPassword(), dbUser.getUserPassword())) {
             result.rejectValue("userPassword", "error.userPassword", "잘못된 비밀번호입니다.");
             return "login";
         }
-        System.out.println("여깅1");
-        session.setAttribute("user", dbUser);
-        System.out.println("여깅2");
+        session.setAttribute("user", UserDTO.fromEntity(dbUser));
         return "main";
     }
 
-    @GetMapping("/main")
-    public String mainPage() {
-        return "main";
-    }
-
+    //로그아웃
     @GetMapping("/logout")
     public String logout(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
@@ -85,5 +81,6 @@ public class MemberController {
         return "main";
     }
 
+    //마이페이지
 
 }

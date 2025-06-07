@@ -1,7 +1,6 @@
-package com.example.mrs.Entity;
+package com.example.mrs.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
