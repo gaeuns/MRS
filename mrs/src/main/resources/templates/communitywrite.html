@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${post != null ? '게시글 수정' : '게시글 작성'} + ' - 커뮤니티 - 무비리뷰'">게시글 작성 - 커뮤니티 - 무비리뷰</title>
+    <link rel="stylesheet" th:href="@{/main.css}">
+    <link rel="stylesheet" th:href="@{/board.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="site-header">
+    <div class="container">
+        <div class="logo">
+            <h1><a th:href="@{/}">무비리뷰</a></h1>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a th:href="@{/}">홈</a></li>
+                <li><a th:href="@{/movies}">영화</a></li>
+                <li><a th:href="@{/reviews}">리뷰</a></li>
+                <li><a th:href="@{/rankings}">랭킹</a></li>
+                <li><a th:href="@{/community}" class="active">커뮤니티</a></li>
+            </ul>
+        </nav>
+        <div class="user-actions">
+            <div class="user-profile" th:if="${session.user != null}">
+                <span th:text="${session.user.userName}">사용자</span>
+                <a th:href="@{/mypage}" class="profile-link">마이페이지</a>
+                <a th:href="@{/logout}" class="logout-link">로그아웃</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="board-main">
+    <div class="container">
+        <div class="board-header">
+            <h1 th:text="${post != null ? '게시글 수정' : '게시글 작성'}">게시글 작성</h1>
+            <div class="breadcrumb">
+                <a th:href="@{/}">홈</a> > <a th:href="@{/community}">커뮤니티</a> >
+                <span th:text="${post != null ? '수정' : '작성'}">작성</span>
+            </div>
+        </div>
+
+        <div class="board-content">
+            <form th:action="${post != null ? '/community/' + post.id + '/edit' : '/community/write'}"
+                  method="post" class="write-form">
+<!--               <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>-->
+
+                <!-- 카테고리 선택 -->
+                <div class="form-group">
+                    <label class="form-label">카테고리 <span class="required">*</span></label>
+                    <div class="radio-group">
+                        <label class="radio-item">
+                            <input type="radio" name="category" value="DISCUSSION"
+                                   th:checked="${post == null or post.category == 'DISCUSSION'}" required>
+                            <span>자유토론</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="category" value="RECOMMENDATION"
+                                   th:checked="${post != null and post.category == 'RECOMMENDATION'}" required>
+                            <span>영화추천</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="category" value="QUESTION"
+                                   th:checked="${post != null and post.category == 'QUESTION'}" required>
+                            <span>질문답변</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="category" value="SPOILER"
+                                   th:checked="${post != null and post.category == 'SPOILER'}" required>
+                            <span>스포일러</span>
+                        </label>
+                    </div>
+                    <div class="form-help">게시글의 성격에 맞는 카테고리를 선택해주세요.</div>
+                </div>
+
+                <!-- 제목 -->
+                <div class="form-group">
+                    <label for="title" class="form-label">제목 <span class="required">*</span></label>
+                    <input type="text" id="title" name="title" class="form-input"
+                           th:value="${post != null ? post.title : ''}"
+                           placeholder="제목을 입력하세요" required maxlength="100">
+                    <div class="form-help">최대 100자까지 입력 가능합니다.</div>
+                </div>
+
+                <!-- 내용 -->
+                <div class="form-group">
+                    <label for="content" class="form-label">내용 <span class="required">*</span></label>
+                    <textarea id="content" name="content" class="form-textarea"
+                              placeholder="내용을 입력하세요&#10;&#10;※ 스포일러가 포함된 내용은 반드시 '스포일러' 카테고리를 선택해주세요.&#10;※ 욕설, 비방, 광고성 글은 삭제될 수 있습니다."
+                              required th:text="${post != null ? post.content : ''}"></textarea>
+                    <div class="form-help">최소 10자 이상 입력해주세요.</div>
+                </div>
+
+                <!-- 커뮤니티 작성 가이드 -->
+                <div class="write-guide">
+                    <h4>📝 커뮤니티 작성 가이드</h4>
+                    <ul>
+                        <li><strong>자유토론:</strong> 영화에 대한 자유로운 의견 교환 및 토론</li>
+                        <li><strong>영화추천:</strong> 다른 사용자에게 영화 추천 및 소개</li>
+                        <li><strong>질문답변:</strong> 영화 관련 궁금한 점이나 질문</li>
+                        <li><strong>스포일러:</strong> 영화 내용 누설이 포함된 글 (반드시 선택 필수)</li>
+                        <li>제목은 내용을 잘 표현할 수 있도록 구체적으로 작성해주세요</li>
+                        <li>다른 사용자를 존중하는 언어를 사용해주세요</li>
+                        <li>스포일러 내용은 반드시 해당 카테고리를 선택해주세요</li>
+                    </ul>
+                </div>
+
+                <!-- 버튼 영역 -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <span th:text="${post != null ? '수정하기' : '작성하기'}">작성하기</span>
+                    </button>
+                    <a th:href="@{/community}" class="btn btn-secondary">취소</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <div class="container">
+        <p>&copy; 2023 무비리뷰. All rights reserved.</p>
+    </div>
+</footer>
+</body>
+</html>
