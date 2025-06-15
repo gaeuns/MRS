@@ -26,14 +26,31 @@ public class CommunityController {
 
 
     @GetMapping("/community")
-    public String Community(@RequestParam(required = false) String category, Model model) {
+    public String communityPage(@RequestParam(required = false) String category, Model model) {
+        List<Community> posts;
 
-        List<Community> posts = communityrepository.findAll();
+        if ("DISCUSSION".equals(category)) {
+            posts = communityrepository.findByCategory("DISCUSSION");
+        }
+        else if ("QUESTION".equals(category)) {
+            posts = communityrepository.findByCategory("QUESTION");
+        }
+        else if ("RECOMMENDATION".equals(category)) {
+            posts = communityrepository.findByCategory("RECOMMENDATION");
+        }
+        else if("SPOILER".equals(category))
+        {
+            posts = communityrepository.findByCategory("SPOILER");
+        }
+        else {
+            posts = communityrepository.findAll();
+        }
 
         model.addAttribute("posts", posts);
         model.addAttribute("category", category);
         return "community";
     }
+
 
 
     @GetMapping("/community/write")
@@ -60,8 +77,6 @@ public class CommunityController {
 
 
         String userId = userdto.getUserId();
-        System.out.println("현재 로그인한 유저 ID: " + userId); //console에 로그인 유저 확인
-        
         
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new IllegalStateException("유효하지 않은 사용자"));//익명함수 사용
@@ -72,7 +87,7 @@ public class CommunityController {
         community.setContent(dto.getContent());
         community.setCategory(dto.getCategory());
         community.setCreate_Date(LocalDate.now());
-        community.setUser(user); // 반드시 영속 상태
+        community.setUser(user);
 
         communityrepository.save(community);
         return "redirect:/community";
@@ -98,9 +113,8 @@ public class CommunityController {
         post.setTitle(dto.getTitle());
         post.setContent(dto.getContent());
         post.setCategory(dto.getCategory());
-        // post.setCreateDate(LocalDateTime.now()); ← 수정 시에는 생략 가능
 
-        communityrepository.save(post); // 기존 post 수정 저장
+        communityrepository.save(post);
         return "redirect:/community";
     }
 
