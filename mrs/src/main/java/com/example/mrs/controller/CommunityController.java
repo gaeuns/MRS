@@ -13,8 +13,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -45,26 +43,13 @@ public class CommunityController {
     }
 
 
-    @PostMapping("/community/{id}/edit")
-    public String edit(@PathVariable Long id,
-                       @ModelAttribute CommunityWriteDTO dto,
-                       @SessionAttribute("user") User user) {
+    @GetMapping("/community/{id}/edit")
+    public String edit(@PathVariable Long id, @ModelAttribute CommunityWriteDTO dto, Model model) {
 
+        Community post = communityrepository.findById(id).orElse(null);
+        model.addAttribute("post", post);
 
-        // 기존 게시글 불러오기
-        Community existingPost = communityrepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다: " + id));
-
-
-        // 게시글 정보 수정
-        existingPost.setTitle(dto.getTitle());
-        existingPost.setContent(dto.getContent());
-        existingPost.setCategory(dto.getCategory());
-
-        // 저장
-        communityrepository.save(existingPost);
-
-        return "redirect:/community";
+        return "communitywrite";
     }
 
 
@@ -94,7 +79,30 @@ public class CommunityController {
     }
 
 
+    @GetMapping("/community/{id}")
+    public String view(@PathVariable("id") Long id, Model model) {
+        Community post = communityrepository.findById(id).orElse(null);
+        model.addAttribute("post", post);
+        return "communityview";
+    }
 
+
+    @PostMapping("/community/{id}/edit")
+    public String updateCommunity(@PathVariable Long id,
+                                  @ModelAttribute CommunityWriteDTO dto,
+                                  @SessionAttribute("user") UserDTO userdto) {
+
+        Community post = communityrepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글 없음"));
+
+        post.setTitle(dto.getTitle());
+        post.setContent(dto.getContent());
+        post.setCategory(dto.getCategory());
+        // post.setCreateDate(LocalDateTime.now()); ← 수정 시에는 생략 가능
+
+        communityrepository.save(post); // 기존 post 수정 저장
+        return "redirect:/community";
+    }
 
 
 

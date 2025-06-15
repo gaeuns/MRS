@@ -31,7 +31,7 @@
             </div>
             <div class="auth-buttons" th:if="${session.user == null}">
                 <a th:href="@{/login}" class="btn btn-login">로그인</a>
-                <a th:href="@{/register}" class="btn btn-register">회원가입</a>
+                <a th:href="@{/signup}" class="btn btn-register">회원가입</a>
             </div>
         </div>
     </div>
@@ -114,7 +114,7 @@
                         </h3>
                         <div class="board-meta">
                             <span class="board-author" th:text="${post.user.userId}">작성자</span>
-                            <span class="board-date" th:text="${#temporals.format(post.create_Date, 'MM.dd HH:mm')}">12.25 14:30</span>
+                            <span class="board-date" th:text="${#temporals.format(post.create_Date, 'MM.dd')}">12.25 14:30</span>
                             <div class="board-stats">
                                 <span class="views" th:text="'조회 ' + ${post.viewCount}">조회 24</span>
                                 <span class="likes" th:text="'추천 ' + ${post.likeCount}">추천 5</span>

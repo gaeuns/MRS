@@ -18,7 +18,6 @@ public class Community {
     private String content;
     @Column(nullable = false)
     private String category;
-    @Column(nullable = false)
     private LocalDate create_Date; //날짜만 필요함으로 LocalDate사용
     private int viewCount = 0;
     private int likeCount = 0;
