@@ -17,7 +17,6 @@ public class Review {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "user_no")
     private User user;
     private int rating;
 
@@ -26,7 +25,6 @@ public class Review {
     private boolean hasSpoiler;
 
     @ManyToOne
-    @JoinColumn(name = "movie_id")
     private Movie movie;
 
     @PrePersist

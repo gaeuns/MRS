@@ -9,7 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "movie_id")
     private Long id;
     private String title;
 
