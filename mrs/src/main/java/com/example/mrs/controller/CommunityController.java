@@ -79,7 +79,7 @@ public class CommunityController {
         String userId = userdto.getUserId();
         
         User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new IllegalStateException("유효하지 않은 사용자"));//익명함수 사용
+                .orElseThrow(() -> new IllegalStateException("사용자가 없는디용 ㅋㅋㅋ"));
 
 
         Community community = new Community();
@@ -96,8 +96,12 @@ public class CommunityController {
 
     @GetMapping("/community/{id}")
     public String view(@PathVariable("id") Long id, Model model) {
+
         Community post = communityrepository.findById(id).orElse(null);
+        post.setViewCount(post.getViewCount()+1);
         model.addAttribute("post", post);
+
+        communityrepository.save(post);
         return "communityview";
     }
 
@@ -108,7 +112,7 @@ public class CommunityController {
                                   @SessionAttribute("user") UserDTO userdto) {
 
         Community post = communityrepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글 없음"));
+                .orElseThrow(() -> new IllegalArgumentException("게시글 하나도 없는디?"));
 
         post.setTitle(dto.getTitle());
         post.setContent(dto.getContent());
@@ -119,7 +123,36 @@ public class CommunityController {
     }
 
 
+    @PostMapping("community/{id}/delete")
+    public String DeleteCommunity(@PathVariable Long id)
+    {
+        Community post = communityrepository.findById(id).orElse(null);
 
+        communityrepository.delete(post);
+
+        return "redirect:/community";
+    }
+
+    @PostMapping("community/{id}/like")
+    public String Like(@PathVariable Long id, @ModelAttribute CommunityWriteDTO dto)
+    {
+        Community post = communityrepository.findById(id).orElse(null);
+
+        post.setLikeCount(post.getLikeCount()+1);
+        communityrepository.save(post);
+
+        return "redirect:/community/{id}";
+    }
+
+    @PostMapping("community/{id}/dislike")
+    public String DisLike(@PathVariable Long id, @ModelAttribute CommunityWriteDTO dto)
+    {
+        Community post = communityrepository.findById(id).orElse(null);
+        post.setDislikeCount(post.getDislikeCount()+1);
+        communityrepository.save(post);
+
+        return "redirect:/community/{id}";
+    }
 
 
 }

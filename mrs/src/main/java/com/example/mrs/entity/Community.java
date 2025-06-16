@@ -21,6 +21,7 @@ public class Community {
     private LocalDate create_Date; //날짜만 필요함으로 LocalDate사용
     private int viewCount = 0;
     private int likeCount = 0;
+    private int dislikeCount = 0;
 
     @Transient
     private String previewContent;
