@@ -1,0 +1,1464 @@
+/* 영화 페이지 전용 스타일 */
+:root {
+    --primary-color: #e50914;
+    --secondary-color: #221f1f;
+    --accent-color: #f5f5f1;
+    --text-color: #333;
+    --light-text: #fff;
+    --dark-text: #222;
+    --border-color: #ddd;
+    --card-bg: #fff;
+    --hover-color: #ff3d47;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+    --light-bg: #f8f9fa;
+    --shadow-light: 0 2px 10px rgba(0, 0, 0, 0.1);
+    --shadow-medium: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* ========================================
+   영화 목록 페이지
+   ======================================== */
+
+.movies-main {
+    padding-top: 90px;
+    min-height: 100vh;
+    background-color: var(--light-bg);
+}
+
+.page-header {
+    text-align: center;
+    padding: 40px 0;
+    background-color: var(--card-bg);
+    margin-bottom: 30px;
+    box-shadow: var(--shadow-light);
+}
+
+.page-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    color: var(--dark-text);
+}
+
+.page-header p {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+/* 필터 및 검색 */
+.movies-filter {
+    background-color: var(--card-bg);
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow-light);
+}
+
+.filter-tabs {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 20px;
+    background-color: #f8f9fa;
+    padding: 5px;
+    border-radius: 8px;
+    flex-wrap: wrap;
+}
+
+.filter-tab {
+    flex: 1;
+    padding: 12px 20px;
+    text-align: center;
+    color: #666;
+    font-weight: 500;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    min-width: 80px;
+}
+
+.filter-tab:hover {
+    background-color: #e9ecef;
+    color: var(--dark-text);
+}
+
+.filter-tab.active {
+    background-color: var(--primary-color);
+    color: var(--light-text);
+}
+
+/* 영화 목록 페이지의 관리자 버튼 스타일 추가 */
+.admin-actions {
+    display: flex;
+    align-items: center;
+}
+
+.btn-admin {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 10px 16px;
+    background-color: var(--success-color);
+    color: var(--light-text);
+    border-radius: 6px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-admin:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+}
+
+.btn-admin span {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.search-sort {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.search-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.search-input {
+    padding: 10px 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    width: 300px;
+    font-size: 0.9rem;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.sort-select {
+    padding: 10px 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    background-color: var(--card-bg);
+}
+
+/* 영화 그리드 */
+.movies-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+    margin-bottom: 40px;
+}
+
+.movie-card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-light);
+    transition: all 0.3s ease;
+}
+
+.movie-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-medium);
+}
+
+.movie-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.movie-poster {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+}
+
+.movie-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.movie-card:hover .movie-poster img {
+    transform: scale(1.05);
+}
+
+.movie-overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.movie-rating {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: var(--light-text);
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.rating-star {
+    color: #ffd700;
+}
+
+.movie-year {
+    background-color: var(--primary-color);
+    color: var(--light-text);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.movie-info {
+    padding: 20px;
+}
+
+.movie-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--dark-text);
+    line-height: 1.3;
+}
+
+.movie-genre {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+}
+
+.movie-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: #888;
+}
+
+/* 영화 카드 액션 버튼 */
+.movie-actions {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.btn-review {
+    display: inline-block;
+    width: 100%;
+    padding: 10px 16px;
+    background-color: var(--primary-color);
+    color: var(--light-text);
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.btn-review:hover {
+    background-color: var(--hover-color);
+    transform: translateY(-1px);
+}
+
+/* 빈 상태 */
+.empty-movies {
+    text-align: center;
+    padding: 80px 20px;
+    color: #666;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+}
+
+.empty-movies h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: var(--dark-text);
+}
+
+/* ========================================
+   영화 상세 페이지
+   ======================================== */
+
+.movie-detail-main {
+    padding-top: 90px;
+    min-height: 100vh;
+    background-color: var(--light-bg);
+}
+
+.breadcrumb {
+    padding: 20px 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.breadcrumb a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.movie-detail-header {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 40px;
+    background-color: var(--card-bg);
+    padding: 40px;
+    border-radius: 12px;
+    margin-bottom: 40px;
+    box-shadow: var(--shadow-light);
+}
+
+.movie-poster-large {
+    position: relative;
+}
+
+.movie-poster-large img {
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: var(--shadow-medium);
+}
+
+.poster-actions {
+    margin-top: 20px;
+}
+
+.btn-wishlist {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--primary-color);
+    background-color: transparent;
+    color: var(--primary-color);
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-wishlist:hover,
+.btn-wishlist.active {
+    background-color: var(--primary-color);
+    color: var(--light-text);
+}
+
+.movie-info-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.movie-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--dark-text);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.movie-title-en {
+    font-size: 1.2rem;
+    color: #666;
+    font-style: italic;
+    margin: 0;
+}
+
+.movie-rating-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.rating-display {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.rating-star {
+    color: #ffd700;
+    font-size: 2rem;
+}
+
+.rating-score {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--dark-text);
+}
+
+.rating-count {
+    color: #666;
+    font-size: 1rem;
+}
+
+.user-rating {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.star-rating {
+    display: flex;
+    gap: 2px;
+}
+
+.star {
+    font-size: 1.5rem;
+    color: #ddd;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.star:hover,
+.star.active {
+    color: #ffd700;
+}
+
+.movie-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.meta-label {
+    font-weight: 600;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.meta-value {
+    color: var(--dark-text);
+    font-size: 1rem;
+}
+
+.movie-synopsis h3 {
+    margin-bottom: 15px;
+    color: var(--dark-text);
+    font-size: 1.3rem;
+}
+
+.movie-synopsis p {
+    line-height: 1.7;
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+.movie-actions {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+/* 상세 페이지 버튼 강화 */
+.btn-large {
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-large span {
+    font-size: 1.2rem;
+}
+
+/* 기본 버튼 스타일 */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    text-decoration: none;
+    text-align: center;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: var(--light-text);
+}
+
+.btn-primary:hover {
+    background-color: var(--hover-color);
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: var(--light-text);
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.btn-outline {
+    background-color: transparent;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.btn-outline:hover {
+    background-color: var(--primary-color);
+    color: var(--light-text);
+}
+
+/* 리뷰 섹션 */
+.reviews-section {
+    background-color: var(--card-bg);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-light);
+    margin-bottom: 60px;
+}
+
+.reviews-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.reviews-header h2 {
+    font-size: 1.8rem;
+    color: var(--dark-text);
+    margin: 0;
+}
+
+.reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.review-item {
+    padding: 25px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background-color: #fafafa;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.reviewer-info {
+    display: flex;
+    gap: 12px;
+}
+
+.reviewer-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.reviewer-details {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.reviewer-name {
+    font-weight: 600;
+    color: var(--dark-text);
+    font-size: 1.1rem;
+}
+
+.review-meta {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.review-rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.review-rating .star {
+    font-size: 1rem;
+    color: #ddd;
+}
+
+.review-rating .star.filled {
+    color: #ffd700;
+}
+
+.rating-text {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.review-date {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.btn-helpful {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background-color: var(--card-bg);
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-helpful:hover,
+.btn-helpful.active {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.review-content {
+    line-height: 1.7;
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+.empty-reviews {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+}
+
+.empty-reviews .empty-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+}
+
+.empty-reviews h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: var(--dark-text);
+}
+
+/* 페이지네이션 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 40px;
+}
+
+.page-btn {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--dark-text);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.page-btn:hover {
+    background-color: var(--primary-color);
+    color: var(--light-text);
+    border-color: var(--primary-color);
+}
+
+.page-btn.active {
+    background-color: var(--primary-color);
+    color: var(--light-text);
+    border-color: var(--primary-color);
+}
+
+/* ========================================
+   리뷰 작성 페이지
+   ======================================== */
+
+.review-write-main {
+    padding-top: 90px;
+    min-height: 100vh;
+    background-color: var(--light-bg);
+}
+
+.review-write-container {
+    background-color: var(--card-bg);
+    padding: 40px;
+    border-radius: 12px;
+    margin-bottom: 40px;
+    box-shadow: var(--shadow-light);
+}
+
+/* 영화 요약 정보 */
+.movie-summary {
+    display: flex;
+    gap: 30px;
+    padding-bottom: 30px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.movie-summary-poster {
+    width: 150px;
+    flex-shrink: 0;
+}
+
+.movie-summary-poster img {
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: var(--shadow-light);
+}
+
+.movie-summary-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+}
+
+.movie-summary-info .movie-title {
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+.movie-meta {
+    color: #666;
+    font-size: 1rem;
+}
+
+.movie-summary .movie-rating {
+    background-color: transparent;
+    padding: 0;
+    font-size: 1rem;
+}
+
+.movie-summary .rating-star {
+    font-size: 1.2rem;
+}
+
+.movie-summary .rating-score {
+    font-size: 1.2rem;
+}
+
+.movie-summary .rating-count {
+    font-size: 0.9rem;
+}
+
+/* 리뷰 폼 */
+.review-form {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--dark-text);
+    font-size: 1rem;
+}
+
+.required {
+    color: var(--danger-color);
+    margin-left: 2px;
+}
+
+.form-textarea {
+    width: 100%;
+    min-height: 300px;
+    padding: 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 1rem;
+    font-family: inherit;
+    line-height: 1.6;
+    resize: vertical;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+.form-textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.form-help {
+    margin-top: 6px;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+/* 별점 선택 */
+.rating-select {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.star-rating-large {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.star-rating-large input {
+    display: none;
+}
+
+.star-rating-large label {
+    font-size: 3rem;
+    color: #ddd;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.star-rating-large label:hover,
+.star-rating-large label:hover ~ label,
+.star-rating-large input:checked ~ label {
+    color: #ffd700;
+}
+
+.rating-text {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--dark-text);
+}
+
+.rating-text #selected-rating {
+    color: var(--primary-color);
+    margin-left: 5px;
+}
+
+/* 체크박스 */
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--primary-color);
+}
+
+.checkbox-label span {
+    font-weight: 600;
+    color: var(--dark-text);
+}
+
+/* 리뷰 가이드 */
+.review-guide {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.review-guide h4 {
+    margin-bottom: 12px;
+    color: var(--dark-text);
+    font-size: 1.1rem;
+}
+
+.review-guide ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.review-guide li {
+    margin-bottom: 8px;
+    line-height: 1.5;
+    color: var(--text-color);
+}
+
+/* 폼 액션 버튼 */
+.form-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    padding-top: 30px;
+    border-top: 1px solid var(--border-color);
+}
+
+.form-actions .btn {
+    min-width: 120px;
+    padding: 12px 24px;
+    font-size: 1rem;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 1200px) {
+    .movie-detail-header {
+        grid-template-columns: 300px 1fr;
+        gap: 30px;
+    }
+}
+
+/* 반응형 스타일 수정 */
+@media (max-width: 1400px) {
+    .movies-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+}
+
+@media (max-width: 992px) {
+    .search-sort {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+    }
+
+    .search-form {
+        justify-content: center;
+    }
+
+    .admin-actions {
+        justify-content: center;
+    }
+
+    .movies-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .movies-main,
+    .movie-detail-main,
+    .review-write-main {
+        padding-top: 70px;
+    }
+
+    .page-header {
+        padding: 20px 0;
+    }
+
+    .page-header h1 {
+        font-size: 2rem;
+    }
+
+    .movies-filter {
+        padding: 20px;
+    }
+
+    .filter-tabs {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .filter-tab {
+        padding: 10px;
+    }
+
+    .search-input {
+        width: 100%;
+    }
+
+    .movies-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .movie-detail-header {
+        padding: 20px;
+    }
+
+    .movie-title {
+        font-size: 2rem;
+    }
+
+    .movie-actions {
+        justify-content: center;
+    }
+
+    .reviews-section {
+        padding: 20px;
+    }
+
+    .review-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+
+    .reviewer-info {
+        align-self: stretch;
+    }
+
+    .review-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .movie-actions {
+        margin-top: 12px;
+        padding-top: 12px;
+    }
+
+    .btn-review {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+
+    .btn-large {
+        padding: 12px 20px;
+        font-size: 1rem;
+    }
+
+    .review-write-container {
+        padding: 20px;
+    }
+
+    .movie-summary {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 20px;
+    }
+
+    .movie-summary-poster {
+        width: 120px;
+    }
+
+    .star-rating-large label {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .movies-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .movie-info {
+        padding: 15px;
+    }
+
+    .movie-title {
+        font-size: 1rem;
+    }
+
+    .movie-detail-header {
+        padding: 15px;
+    }
+
+    .movie-title {
+        font-size: 1.5rem;
+    }
+
+    .reviews-section {
+        padding: 15px;
+    }
+
+    .review-item {
+        padding: 15px;
+    }
+
+    .reviewer-avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .movie-actions {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-large {
+        width: 100%;
+        justify-content: center;
+        margin-bottom: 10px;
+    }
+
+    .star-rating-large {
+        gap: 5px;
+    }
+
+    .star-rating-large label {
+        font-size: 2rem;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .form-actions .btn {
+        width: 100%;
+    }
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.movies-grid,
+.movie-detail-header,
+.reviews-section,
+.review-write-container {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* ========================================
+   영화 등록 페이지
+   ======================================== */
+
+.movie-register-form {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* 폼 섹션 */
+.form-section {
+    background-color: #fafafa;
+    padding: 30px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    border: 1px solid var(--border-color);
+}
+
+.section-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--dark-text);
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+/* 폼 행 레이아웃 */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* 체크박스 그리드 */
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px;
+    padding: 15px;
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+}
+
+.checkbox-item:hover {
+    background-color: #f8f9fa;
+}
+
+.checkbox-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary-color);
+}
+
+.checkbox-item span {
+    font-weight: 500;
+    color: var(--dark-text);
+}
+
+/* 특별한 텍스트 영역 */
+.cast-textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.synopsis-textarea {
+    min-height: 200px;
+    resize: vertical;
+}
+
+/* 단위가 있는 입력 필드 */
+.input-with-unit {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.input-with-unit .form-input {
+    flex: 1;
+}
+
+.input-unit {
+    font-weight: 600;
+    color: var(--dark-text);
+    font-size: 1rem;
+}
+
+/* 파일 업로드 영역 */
+.file-upload-area {
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    transition: border-color 0.3s ease;
+    background-color: var(--card-bg);
+}
+
+.file-upload-area:hover {
+    border-color: var(--primary-color);
+}
+
+.file-input {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.upload-placeholder {
+    padding: 20px;
+}
+
+.upload-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.upload-placeholder p {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--dark-text);
+    margin-bottom: 5px;
+}
+
+.upload-placeholder small {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.current-poster {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.poster-preview {
+    max-width: 200px;
+    max-height: 300px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-light);
+}
+
+.current-poster p {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* 선택 박스 스타일 개선 */
+select.form-input {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 12px center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    padding-right: 40px;
+    appearance: none;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+    .movie-register-form {
+        max-width: 100%;
+    }
+
+    .form-section {
+        padding: 20px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .checkbox-grid {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 10px;
+    }
+
+    .checkbox-item {
+        padding: 6px 8px;
+    }
+
+    .section-title {
+        font-size: 1.1rem;
+    }
+
+    .upload-placeholder {
+        padding: 15px;
+    }
+
+    .upload-icon {
+        font-size: 2.5rem;
+    }
+
+    .poster-preview {
+        max-width: 150px;
+        max-height: 225px;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-section {
+        padding: 15px;
+    }
+
+    .checkbox-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .input-with-unit {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 5px;
+    }
+
+    .upload-placeholder {
+        padding: 10px;
+    }
+
+    .upload-icon {
+        font-size: 2rem;
+    }
+
+    .poster-preview {
+        max-width: 120px;
+        max-height: 180px;
+    }
+}
+
+/* 폼 검증 스타일 */
+.form-input:invalid {
+    border-color: var(--danger-color);
+}
+
+.form-input:valid {
+    border-color: var(--success-color);
+}
+
+/* 로딩 상태 */
+.form-actions .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* 애니메이션 */
+.form-section {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.checkbox-item {
+    animation: slideIn 0.2s ease-out;
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 1rem;
+    font-family: inherit;
+    line-height: 1.5;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.review-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--dark-text);
+    margin-bottom: 8px;
+}

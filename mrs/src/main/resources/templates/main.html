@@ -46,7 +46,7 @@
         <div class="hero-content">
             <h2>최신 영화 리뷰와 평점을 만나보세요</h2>
             <p>다양한 영화의 리뷰를 읽고 직접 작성해보세요!</p>
-            <a th:href="@{/reviews/write}" class="btn btn-primary">리뷰 작성하기</a>
+            <a th:href="@{movies}" class="btn btn-primary">리뷰 작성하기</a>
         </div>
     </div>
 </section>
@@ -55,7 +55,8 @@
     <div class="container">
         <h2 class="section-title">인기 영화</h2>
         <div class="movie-grid">
-            <div th:each="movie : ${movies}" class="movie-card">
+            <div th:each="movie : ${movie}" class="movie-card">
+                <a th:href="@{/movie-page/{id}(id=${movie.id})}" class="movie-link">
                 <div class="movie-poster">
                     <img th:src="${movie.posterUrl}" th:alt="${movie.title}">
                     <div class="movie-rating" th:text="${movie.rating}">9.5</div>
@@ -63,11 +64,11 @@
                 <div class="movie-info">
                     <h3 class="movie-title" th:text="${movie.title}">영화 제목</h3>
                     <p class="movie-genre" th:text="${movie.category}">장르</p>
-                    <a th:href="@{/movies/{id}(id=${movie.id})}" class="btn btn-sm">상세보기</a>
                 </div>
+                </a>
             </div>
             <!-- 샘플 영화 카드 (백엔드 데이터가 없을 때 표시) -->
-            <div class="movie-card" th:if="${movies == null or #lists.isEmpty(movies)}">
+            <div class="movie-card" th:if="${movie == null or #lists.isEmpty(movie)}">
                 <div class="movie-poster">
                     <img src="/images/sample-movie.jpg" alt="샘플 영화">
                     <div class="movie-rating">9.2</div>
@@ -78,7 +79,7 @@
                     <a href="#" class="btn btn-sm">상세보기</a>
                 </div>
             </div>
-            <div class="movie-card" th:if="${movies == null}">
+            <div class="movie-card" th:if="${movie == null}">
                 <div class="movie-poster">
                     <img src="/images/sample-movie2.jpg" alt="샘플 영화">
                     <div class="movie-rating">8.8</div>
@@ -89,7 +90,7 @@
                     <a href="#" class="btn btn-sm">상세보기</a>
                 </div>
             </div>
-            <div class="movie-card" th:if="${movies == null}">
+            <div class="movie-card" th:if="${movie == null}">
                 <div class="movie-poster">
                     <img src="/images/sample-movie3.jpg" alt="샘플 영화">
                     <div class="movie-rating">8.5</div>
@@ -100,7 +101,7 @@
                     <a href="#" class="btn btn-sm">상세보기</a>
                 </div>
             </div>
-            <div class="movie-card" th:if="${movies == null}">
+            <div class="movie-card" th:if="${movie == null}">
                 <div class="movie-poster">
                     <img src="/images/sample-movie4.jpg" alt="샘플 영화">
                     <div class="movie-rating">9.0</div>
@@ -119,7 +120,7 @@
     <div class="container">
         <h2 class="section-title">최신 리뷰</h2>
         <div class="reviews-list">
-            <div th:each="review : ${latestReviews}" class="review-card">
+            <div th:each="review : ${review}" class="review-card">
                 <div class="review-header">
                     <div class="review-movie">
                         <img th:src="${review.movie.posterUrl}" th:alt="${review.movie.title}" class="review-movie-poster">
@@ -128,22 +129,22 @@
                     <div class="review-rating" th:text="${review.rating}">8.5</div>
                 </div>
                 <div class="review-content">
-                    <h4 th:text="${review.title}">리뷰 제목</h4>
-                    <p th:text="${review.content}">리뷰 내용...</p>
+                    <h4 th:text="${review.title}">리뷰 제목</h4>-
+                    <p th:text="${review.description}">리뷰 내용...</p>
                 </div>
                 <div class="review-footer">
                     <div class="review-author">
-                        <span th:text="${review.author.username}">작성자</span>
+                        <span th:text="${review.user.userName}">작성자</span>
                     </div>
-                    <div class="review-date" th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd')}">2023-06-04</div>
-                    <div class="review-actions">
+                    <div class="review-date" th:text="${review.date}">2023-06-04</div>
+                    <!--<div class="review-actions">
                         <span class="likes" th:text="${review.likeCount}">15</span>
                         <span class="comments" th:text="${review.commentCount}">3</span>
-                    </div>
+                    </div>-->
                 </div>
             </div>
             <!-- 샘플 리뷰 카드 (백엔드 데이터가 없을 때 표시) -->
-            <div class="review-card" th:if="${latestReviews == null}">
+            <div class="review-card" th:if="${review == null}">
                 <div class="review-header">
                     <div class="review-movie">
                         <img src="/images/sample-movie.jpg" alt="인터스텔라" class="review-movie-poster">
@@ -164,7 +165,7 @@
                     </div>
                 </div>
             </div>
-            <div class="review-card" th:if="${latestReviews == null}">
+            <div class="review-card" th:if="${review == null}">
                 <div class="review-header">
                     <div class="review-movie">
                         <img src="/images/sample-movie2.jpg" alt="기생충" class="review-movie-poster">
@@ -187,7 +188,7 @@
             </div>
         </div>
         <div class="more-reviews">
-            <a th:href="@{/reviews}" class="btn btn-outline">더 많은 리뷰 보기</a>
+            <a th:href="@{/movies}" class="btn btn-outline">더 많은 리뷰 보기</a>
         </div>
     </div>
 </section>
@@ -196,16 +197,16 @@
     <div class="container">
         <h2 class="section-title">장르별 영화</h2>
         <div class="category-list">
-            <a th:each="genre : ${genres}" th:href="@{/movies/genre/{name}(name=${genre.name})}" class="category-item" th:text="${genre.name}">액션</a>
-            <!-- 샘플 장르 (백엔드 데이터가 없을 때 표시) -->
-            <a href="#" class="category-item" th:if="${genres == null}">액션</a>
-            <a href="#" class="category-item" th:if="${genres == null}">코미디</a>
-            <a href="#" class="category-item" th:if="${genres == null}">로맨스</a>
-            <a href="#" class="category-item" th:if="${genres == null}">공포</a>
-            <a href="#" class="category-item" th:if="${genres == null}">SF</a>
-            <a href="#" class="category-item" th:if="${genres == null}">드라마</a>
-            <a href="#" class="category-item" th:if="${genres == null}">애니메이션</a>
-            <a href="#" class="category-item" th:if="${genres == null}">스릴러</a>
+            <a th:href="@{/movies(category='action')}" class="category-item" >액션</a>
+            <a th:href="@{/movies(category='drama')}" class="category-item" >드라마</a>
+            <a th:href="@{/movies(category='comedy')}" class="category-item" >코미디</a>
+            <a th:href="@{/movies(category='thriller')}" class="category-item" >스릴러</a>
+            <a th:href="@{/movies(category='romance')}" class="category-item" >로맨스</a>
+            <a th:href="@{/movies(category='horror')}" class="category-item" >공포</a>
+            <a th:href="@{/movies(category='sf')}" class="category-item" >SF</a>
+            <a th:href="@{/movies(category='fantasy')}" class="category-item" >판타지</a>
+            <a th:href="@{/movies(category='animation')}" class="category-item" >애니메이션</a>
+            <a th:href="@{/movies(category='documentary')}" class="category-item" >다큐멘터리</a>
         </div>
     </div>
 </section>

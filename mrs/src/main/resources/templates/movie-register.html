@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${movie != null ? '영화 수정' : '영화 등록'} + ' - 무비리뷰'">영화 등록 - 무비리뷰</title>
+    <link rel="stylesheet" th:href="@{/main.css}">
+    <link rel="stylesheet" th:href="@{/board.css}">
+    <link rel="stylesheet" th:href="@{/movies.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="site-header">
+    <div class="container">
+        <div class="logo">
+            <h1><a th:href="@{/}">무비리뷰</a></h1>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a th:href="@{/}">홈</a></li>
+                <li><a th:href="@{/movies}">영화</a></li>
+                <li><a th:href="@{/community}">커뮤니티</a></li>
+                <li><a th:href="@{/notice}">공지사항</a></li>
+            </ul>
+        </nav>
+        <div class="user-actions">
+            <div class="user-profile" th:if="${session.user != null}">
+                <span th:text="${session.user.userName}">관리자</span>
+                <a th:href="@{/mypage}" class="profile-link">마이페이지</a>
+                <a th:href="@{/logout}" class="logout-link">로그아웃</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="board-main">
+    <div class="container">
+        <div class="board-header">
+            <h1 th:text="${movie != null ? '영화 수정' : '영화 등록'}">영화 등록</h1>
+            <div class="breadcrumb">
+                <a th:href="@{/}">홈</a> > <a th:href="@{/movies}">영화</a> >
+                <span th:text="${movie != null ? '수정' : '등록'}">등록</span>
+            </div>
+        </div>
+
+        <div class="board-content">
+                            <!--movie != null ? '/addmovie' + movie.id + '/edit' : '/movies-register'-->
+            <form th:action="@{/addmovie}" th:object="${movies}"
+                  method="post" enctype="multipart/form-data" class="movie-register-form">
+                <!--<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>-->
+
+                <!-- 기본 정보 섹션 -->
+                <div class="form-section">
+                    <h3 class="section-title">📽️ 기본 정보</h3>
+
+                    <!-- 영화 제목 -->
+                    <div class="form-group">
+                        <label for="title" class="form-label">영화 제목 <span class="required">*</span></label>
+                        <input type="text" id="title" name="title" class="form-input"
+                               th:value="${movie != null ? movie.title : ''}"
+                               placeholder="영화 제목을 입력하세요" required maxlength="200">
+                        <div class="form-help">한국어 제목을 입력해주세요. (최대 200자)</div>
+                    </div>
+
+                    <!-- 장르 선택 -->
+                    <div class="form-group">
+                        <label class="form-label">장르 <span class="required">*</span></label>
+                        <div class="checkbox-grid">
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="category" value="ACTION"
+                                       th:checked="${movie != null and #lists.contains(movie.category, 'ACTION')}">
+                                <span>액션</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="category" value="DRAMA"
+                                       th:checked="${movie != null and #lists.contains(movie.category, 'DRAMA')}">
+                                <span>드라마</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="category" value="COMEDY"
+                                       th:checked="${movie != null and #lists.contains(movie.category, 'COMEDY')}">
+                                <span>코미디</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="category" value="THRILLER"
+                                       th:checked="${movie != null and #lists.contains(movie.category, 'THRILLER')}">
+                                <span>스릴러</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="category" value="ROMANCE"
+                                       th:checked="${movie != null and #lists.contains(movie.category, 'ROMANCE')}">
+                                <span>로맨스</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="category" value="HORROR"
+                                       th:checked="${movie != null and #lists.contains(movie.category, 'HORROR')}">
+                                <span>공포</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="category" value="SF"
+                                       th:checked="${movie != null and #lists.contains(movie.category, 'SF')}">
+                                <span>SF</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="category" value="FANTASY"
+                                       th:checked="${movie != null and #lists.contains(movie.category, 'FANTASY')}">
+                                <span>판타지</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="category" value="ANIMATION"
+                                       th:checked="${movie != null and #lists.contains(movie.category, 'ANIMATION')}">
+                                <span>애니메이션</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="category" value="DOCUMENTARY"
+                                       th:checked="${movie != null and #lists.contains(movie.category, 'DOCUMENTARY')}">
+                                <span>다큐멘터리</span>
+                            </label>
+                        </div>
+                        <div class="form-help">해당하는 장르를 모두 선택해주세요. (최소 1개 이상)</div>
+                    </div>
+
+                    <!-- 감독 -->
+                    <div class="form-group">
+                        <label for="director" class="form-label">감독 <span class="required">*</span></label>
+                        <input type="text" id="director" name="director" class="form-input"
+                               th:value="${movie != null ? movie.director : ''}"
+                               placeholder="감독명을 입력하세요" required maxlength="100">
+                        <div class="form-help">여러 명인 경우 쉼표(,)로 구분해주세요.</div>
+                    </div>
+
+                    <!-- 출연진 -->
+                    <div class="form-group">
+                        <label for="actor" class="form-label">주요 출연진 <span class="required">*</span></label>
+                        <textarea id="actor" name="actor" class="form-textarea cast-textarea"
+                                  placeholder="주요 출연진을 입력하세요&#10;예: 김민정, 이정재, 박서준, 전지현"
+                                  required th:text="${movie != null ? movie.actor : ''}"></textarea>
+                        <div class="form-help">주요 출연진을 쉼표(,)로 구분하여 입력해주세요.</div>
+                    </div>
+                </div>
+
+                <!-- 상세 정보 섹션 -->
+                <div class="form-section">
+                    <h3 class="section-title">📋 상세 정보</h3>
+
+                    <div class="form-row">
+                        <!-- 개봉일 -->
+                        <div class="form-group">
+                            <label for="releaseDate" class="form-label">개봉일 <span class="required">*</span></label>
+                            <input type="date" id="releaseDate" name="releaseDate" class="form-input"
+                                   th:value="${movie != null ? #temporals.format(movie.releaseDate, 'yyyy-MM-dd') : ''}"
+                                   required>
+                            <div class="form-help">영화의 개봉일을 선택해주세요.</div>
+                        </div>
+
+                        <!-- 러닝타임 -->
+                        <div class="form-group">
+                            <label for="runtime" class="form-label">러닝타임 <span class="required">*</span></label>
+                            <div class="input-with-unit">
+                                <input type="number" id="runtime" name="runtime" class="form-input"
+                                       th:value="${movie != null ? movie.runtime : ''}"
+                                       placeholder="120" min="1" max="999" required>
+                                <span class="input-unit">분</span>
+                            </div>
+                            <div class="form-help">영화의 상영 시간을 분 단위로 입력해주세요.</div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <!-- 제작 국가 -->
+                        <div class="form-group">
+                            <label for="country" class="form-label">제작 국가 <span class="required">*</span></label>
+                            <select id="country" name="country" class="form-input" required>
+                                <option value="">국가를 선택하세요</option>
+                                <option value="한국" th:selected="${movie != null and movie.country == '한국'}">한국</option>
+                                <option value="미국" th:selected="${movie != null and movie.country == '미국'}">미국</option>
+                                <option value="일본" th:selected="${movie != null and movie.country == '일본'}">일본</option>
+                                <option value="중국" th:selected="${movie != null and movie.country == '중국'}">중국</option>
+                                <option value="영국" th:selected="${movie != null and movie.country == '영국'}">영국</option>
+                                <option value="프랑스" th:selected="${movie != null and movie.country == '프랑스'}">프랑스</option>
+                                <option value="독일" th:selected="${movie != null and movie.country == '독일'}">독일</option>
+                                <option value="기타" th:selected="${movie != null and movie.country == '기타'}">기타</option>
+                            </select>
+                            <div class="form-help">주요 제작 국가를 선택해주세요.</div>
+                        </div>
+
+                        <!-- 관람 등급 -->
+                        <div class="form-group">
+                            <label for="rating" class="form-label">관람 등급 <span class="required">*</span></label>
+                            <select id="rating" name="rating" class="form-input" required>
+                                <option value="">등급을 선택하세요</option>
+                                <option value="전체관람가" th:selected="${movie != null and movie.rating == '전체관람가'}">전체관람가</option>
+                                <option value="12세이상관람가" th:selected="${movie != null and movie.rating == '12세이상관람가'}">12세이상관람가</option>
+                                <option value="15세이상관람가" th:selected="${movie != null and movie.rating == '15세이상관람가'}">15세이상관람가</option>
+                                <option value="청소년관람불가" th:selected="${movie != null and movie.rating == '청소년관람불가'}">청소년관람불가</option>
+                                <option value="제한상영가" th:selected="${movie != null and movie.rating == '제한상영가'}">제한상영가</option>
+                            </select>
+                            <div class="form-help">영화의 관람 등급을 선택해주세요.</div>
+                        </div>
+                    </div>
+
+                    <!-- 줄거리 -->
+                    <div class="form-group">
+                        <label for="synopsis" class="form-label">줄거리 <span class="required">*</span></label>
+                        <textarea id="synopsis" name="synopsis" class="form-textarea synopsis-textarea"
+                                  placeholder="영화의 줄거리를 입력하세요&#10;&#10;• 스포일러가 포함되지 않도록 주의해주세요&#10;• 영화의 전체적인 스토리와 분위기를 간략하게 소개해주세요"
+                                  required th:text="${movie != null ? movie.synopsis : ''}"></textarea>
+                        <div class="form-help">영화의 줄거리를 스포일러 없이 작성해주세요. (최대 2,000자)</div>
+                    </div>
+                </div>
+
+                <!-- 미디어 정보 섹션 -->
+                <div class="form-section">
+                    <h3 class="section-title">🎬 미디어 정보</h3>
+
+                    <!-- 포스터 업로드 -->
+                    <div class="form-group">
+                        <label for="posterFile" class="form-label">포스터 이미지 <span class="required">*</span></label>
+                        <div class="file-upload-area">
+                            <input type="file" id="posterFile" name="posterFile" accept="image/*"
+                                   th:required="${movie == null}" class="file-input">
+                            <div class="file-upload-display">
+                                <div class="upload-placeholder" th:if="${movie == null or movie.posterUrl == null}">
+                                    <div class="upload-icon">📷</div>
+                                    <p>포스터 이미지를 선택하세요</p>
+                                    <small>JPG, PNG 파일 (최대 10MB)</small>
+                                </div>
+                                <div class="current-poster" th:if="${movie != null and movie.posterUrl != null}">
+                                    <img th:src="${movie.posterUrl}" alt="현재 포스터" class="poster-preview">
+                                    <p>새 이미지를 선택하면 교체됩니다</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-help">영화 포스터 이미지를 업로드해주세요. (권장 비율: 3:4)</div>
+                    </div>
+
+                    <!-- 예고편 URL -->
+                    <div class="form-group">
+                        <label for="trailerUrl" class="form-label">예고편 URL</label>
+                        <input type="url" id="trailerUrl" name="trailerUrl" class="form-input"
+                               th:value="${movie != null ? movie.trailerUrl : ''}"
+                               placeholder="https://www.youtube.com/watch?v=...">
+                        <div class="form-help">YouTube 또는 기타 동영상 플랫폼의 예고편 URL을 입력해주세요.</div>
+                    </div>
+                </div>
+
+                <!-- 영화 등록 가이드 -->
+                <div class="write-guide">
+                    <h4>🎯 영화 등록 가이드</h4>
+                    <ul>
+                        <li><strong>정확한 정보:</strong> 영화의 정확한 정보를 확인 후 입력해주세요</li>
+                        <li><strong>포스터 이미지:</strong> 고화질의 공식 포스터를 사용해주세요</li>
+                        <li><strong>장르 선택:</strong> 영화의 성격에 맞는 장르를 정확히 선택해주세요</li>
+                        <li><strong>줄거리 작성:</strong> 스포일러 없이 영화의 매력을 전달할 수 있도록 작성해주세요</li>
+                        <li><strong>출연진 정보:</strong> 주요 출연진 위주로 입력해주세요</li>
+                    </ul>
+                </div>
+
+                <!-- 버튼 영역 -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <span th:text="${movie != null ? '수정하기' : '등록하기'}">등록하기</span>
+                    </button>
+                    <a th:href="@{/movies}" class="btn btn-secondary">취소</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <div class="container">
+        <p>&copy; 2025 Spring Boot Project</p>
+    </div>
+</footer>
+</body>
+</html>
