@@ -41,7 +41,7 @@ public class UserController {
             return "signup";
         }
 
-        // ✅ 기본 사용자 권한 부여
+        // 기본 사용자 권한 부여
         user.setUserRole(UserRole.USER);
 
         userRepository.save(user);
@@ -71,7 +71,7 @@ public class UserController {
             return "login";
         }
 
-        // ✅ 로그인 시 userRole 포함된 DTO로 세션 저장
+        //  로그인 시 userRole 포함된 DTO로 세션 저장
         session.setAttribute("user", UserDTO.fromEntity(dbUser));
         return "main";
     }
@@ -86,5 +86,5 @@ public class UserController {
         return "main";
     }
 
-    // 마이페이지 등 필요시 추가
+
 }

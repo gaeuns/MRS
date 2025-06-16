@@ -9,7 +9,7 @@ public class UserDTO {
     private String userId;
     private String userName;
     private String email;
-    private UserRole userRole;  // ✅ 추가된 필드
+    private UserRole userRole;  // 관리자 권한
 
     public UserDTO(String userId, String userName, String email, UserRole userRole) {
         this.userId = userId;
@@ -23,7 +23,7 @@ public class UserDTO {
                 user.getUserId(),
                 user.getUserName(),
                 user.getUserEmail(),
-                user.getUserRole() // ✅ 추가된 역할 정보
+                user.getUserRole()
         );
     }
 }

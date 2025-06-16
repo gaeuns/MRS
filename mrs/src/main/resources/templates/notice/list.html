@@ -50,16 +50,16 @@
         <!-- 필터 및 검색 -->
         <div class="board-filter">
             <div class="filter-tabs">
-                <a th:href="@{/notices}"
+                <a th:href="@{/notice}"
                    th:class="${param.importance == null} ? 'filter-tab active' : 'filter-tab'">전체</a>
-                <a th:href="@{/notices(importance='IMPORTANT')}"
+                <a th:href="@{/notice(importance='IMPORTANT')}"
                    th:class="${param.importance == 'IMPORTANT'} ? 'filter-tab active' : 'filter-tab'">중요 공지</a>
-                <a th:href="@{/notices(importance='NORMAL')}"
+                <a th:href="@{/notice(importance='NORMAL')}"
                    th:class="${param.importance == 'NORMAL'} ? 'filter-tab active' : 'filter-tab'">일반 공지</a>
             </div>
 
             <div class="search-sort">
-                <form th:action="@{/notices}" method="get" class="search-form">
+                <form th:action="@{/notice}" method="get" class="search-form">
                     <input type="hidden" name="importance" th:value="${param.importance}">
                     <input type="hidden" name="sort" th:value="${param.sort}">
                     <input type="text" name="keyword" th:value="${param.keyword}"
@@ -68,19 +68,19 @@
                 </form>
 
                 <div th:if="${session.user != null and session.user.userRole.name() == 'ADMIN'}">
-                    <a th:href="@{/notices/write}" class="btn btn-write">
-                        <span✍️</span> 공지 작성
+                    <a th:href="@{/notice/write}" class="btn btn-write">
+                        <span>✍️</span> 공지 작성
                     </a>
                 </div>
 
                 <div class="sort-options">
                     <select onchange="location.href=this.value" class="sort-select">
                         <option value="" th:selected="${param.sort == null}">정렬 기준</option>
-                        <option th:value="@{/notices(importance=${param.importance}, keyword=${param.keyword}, sort='latest')}"
+                        <option th:value="@{/notice(importance=${param.importance}, keyword=${param.keyword}, sort='latest')}"
                                 th:selected="${param.sort == 'latest'}">최신순</option>
-                        <option th:value="@{/notices(importance=${param.importance}, keyword=${param.keyword}, sort='views')}"
+                        <option th:value="@{/notice(importance=${param.importance}, keyword=${param.keyword}, sort='views')}"
                                 th:selected="${param.sort == 'views'}">조회순</option>
-                        <option th:value="@{/notices(importance=${param.importance}, keyword=${param.keyword}, sort='title')}"
+                        <option th:value="@{/notice(importance=${param.importance}, keyword=${param.keyword}, sort='title')}"
                                 th:selected="${param.sort == 'title'}">제목순</option>
                     </select>
                 </div>
@@ -89,7 +89,7 @@
 
         <!-- 공지사항 목록 -->
         <div class="board-list">
-            <!-- 중요 공지사항 (상단 고정) -->
+            <!-- 중요 공지사항 -->
             <div th:each="notice : ${importantNotices}" class="notice-item important">
                 <div class="notice-header">
                     <div class="notice-content-area">
@@ -98,12 +98,12 @@
                             <span th:if="${notice.isNew}" class="new-badge">NEW</span>
                         </div>
                         <h3 class="notice-title">
-                            <a th:href="@{/notices/{id}(id=${notice.id})}" th:text="${notice.title}">중요한 공지사항 제목</a>
+                            <a th:href="@{/notice/{id}(id=${notice.id})}" th:text="${notice.title}">중요한 공지사항 제목</a>
                         </h3>
                         <div class="notice-meta">
-                            <span class="notice-author">관리자</span>
-                            <span class="notice-date" th:text="${#temporals.format(notice.createdAt, 'yyyy.MM.dd')}">2023.12.25</span>
-                            <span class="notice-views" th:text="'조회 ' + ${notice.viewCount}">조회 156</span>
+                            <span class="notice-author" th:text="${notice.author}">작성자</span>
+                            <span class="notice-date" th:text="${#temporals.format(notice.createdAt, 'yyyy.MM.dd')}">날짜</span>
+                            <span class="notice-views" th:text="'조회 ' + ${notice.viewCount}">조회수</span>
                         </div>
                     </div>
                 </div>
@@ -118,22 +118,19 @@
                             <span th:if="${notice.isNew}" class="new-badge">NEW</span>
                         </div>
                         <h3 class="notice-title">
-                            <a th:href="@{/notices/{id}(id=${notice.id})}" th:text="${notice.title}">공지사항 제목</a>
+                            <a th:href="@{/notice/{id}(id=${notice.id})}" th:text="${notice.title}">공지사항 제목</a>
                         </h3>
                         <div class="notice-meta">
-                            <span class="notice-author">관리자</span>
-                            <span class="notice-date" th:text="${#temporals.format(notice.createdAt, 'yyyy.MM.dd')}">2023.12.20</span>
-                            <span class="notice-views" th:text="'조회 ' + ${notice.viewCount}">조회 89</span>
+                            <span class="notice-author" th:text="${notice.author}">작성자</span>
+                            <span class="notice-date" th:text="${#temporals.format(notice.createdAt, 'yyyy.MM.dd')}">날짜</span>
+                            <span class="notice-views" th:text="'조회 ' + ${notice.viewCount}">조회수</span>
                         </div>
-                    </div>
-                    <div class="notice-preview" th:if="${notice.previewContent}">
-                        <p th:text="${notice.previewContent}">공지사항 내용의 일부가 미리보기로 표시됩니다...</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 공지사항이 없을 때 -->
+        <!-- 공지사항 없음 -->
         <div th:if="${(notices == null or notices.empty) and (importantNotices == null or importantNotices.empty)}" class="empty-board">
             <div class="empty-icon">📢</div>
             <h3>공지사항이 없습니다</h3>
@@ -144,22 +141,22 @@
         <!-- 페이지네이션 -->
         <div th:if="${noticePage != null and noticePage.totalPages > 1}" class="pagination">
             <a th:if="${noticePage.hasPrevious()}"
-               th:href="@{/notices(page=${noticePage.number - 1}, importance=${param.importance}, keyword=${param.keyword}, sort=${param.sort})}"
+               th:href="@{/notice(page=${noticePage.number - 1}, importance=${param.importance}, keyword=${param.keyword}, sort=${param.sort})}"
                class="page-btn">이전</a>
 
             <span th:each="i : ${#numbers.sequence(0, noticePage.totalPages - 1)}"
                   th:if="${i >= noticePage.number - 2 and i <= noticePage.number + 2}"
                   th:class="${i == noticePage.number} ? 'page-btn active' : 'page-btn'">
-                    <a th:href="@{/notices(page=${i}, importance=${param.importance}, keyword=${param.keyword}, sort=${param.sort})}"
-                       th:text="${i + 1}">1</a>
-                </span>
+                <a th:href="@{/notice(page=${i}, importance=${param.importance}, keyword=${param.keyword}, sort=${param.sort})}"
+                   th:text="${i + 1}">1</a>
+            </span>
 
             <a th:if="${noticePage.hasNext()}"
-               th:href="@{/notices(page=${noticePage.number + 1}, importance=${param.importance}, keyword=${param.keyword}, sort=${param.sort})}"
+               th:href="@{/notice(page=${noticePage.number + 1}, importance=${param.importance}, keyword=${param.keyword}, sort=${param.sort})}"
                class="page-btn">다음</a>
         </div>
 
-        <!-- 공지사항 안내 -->
+        <!-- 안내 -->
         <div class="notice-guide">
             <h4>📋 공지사항 안내</h4>
             <ul>
@@ -174,7 +171,7 @@
 
 <footer class="site-footer">
     <div class="container">
-        <p>&copy; 2023 무비리뷰. All rights reserved.</p>
+        <p>&copy; 2025 무비리뷰. All rights reserved.</p>
     </div>
 </footer>
 </body>
