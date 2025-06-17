@@ -1,9 +1,11 @@
 package com.example.mrs.controller;
 
 
+import com.example.mrs.Service.CommunityCommentService;
 import com.example.mrs.dto.CommunityWriteDTO;
 import com.example.mrs.dto.UserDTO;
 import com.example.mrs.entity.Community;
+import com.example.mrs.entity.CommunityComment;
 import com.example.mrs.entity.User;
 import com.example.mrs.repository.CommunityRepository;
 import com.example.mrs.repository.UserRepository;
@@ -20,9 +22,12 @@ public class CommunityController {
 
     @Autowired
     private CommunityRepository communityrepository;
+
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private CommunityCommentService commentService;
 
 
     @GetMapping("/community")
@@ -99,6 +104,9 @@ public class CommunityController {
 
         Community post = communityrepository.findById(id).orElse(null);
         post.setViewCount(post.getViewCount()+1);
+        List<CommunityComment> comments = commentService.commentsByCommunityRead(id);
+
+        model.addAttribute("comments", comments);
         model.addAttribute("post", post);
 
         communityrepository.save(post);
@@ -154,5 +162,37 @@ public class CommunityController {
         return "redirect:/community/{id}";
     }
 
+    @PostMapping("/community/{id}/comment")
+    public String commentWrite(@PathVariable Long id,
+                               @RequestParam String content,
+                               @SessionAttribute("user") UserDTO userdto) {
+
+        String user = userdto.getUserId();
+        Community post = communityrepository.findById(id).orElse(null);
+        post.setCommentCount(post.getCommentCount()+1);
+        communityrepository.save(post);
+
+        commentService.commentWrite(id, content, user);
+
+        return "redirect:/community/" + id;
+    }
+
+    @PostMapping("/community/comment/{id}/delete/{communityId}")
+    public String commentDelete(@PathVariable Long id, @PathVariable Long communityId)
+    {
+        Community post = communityrepository.findById(communityId).orElse(null);
+        post.setCommentCount(post.getCommentCount()-1);
+        communityrepository.save(post);
+
+        commentService.deleteComment(id);
+        return "redirect:/community/" + communityId;
+    }
+
+    @PostMapping("/community/comment/update")
+    public String commentUpdate(@RequestParam String content, @RequestParam Long commentId, @RequestParam Long communityId)
+    {
+        commentService.updateComment(content, commentId);
+        return "redirect:/community/" + communityId;
+    }
 
 }

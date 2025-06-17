@@ -60,7 +60,7 @@
 <!--                                 th:alt="${post.user.userId}" class="author-avatar">-->
                             <div class="author-details">
                                 <span class="author-name" th:text="${post.user.userId}">작성자</span>
-                                <span class="post-date" th:text="${#temporals.format(post.create_Date, 'yyyy년 MM월')}">2023년 06월 01일</span>
+                                <span class="post-date" th:text="${#temporals.format(post.create_Date, 'yyyy년 MM월 dd일')}">2023년 06월 01일</span>
                             </div>
                         </div>
                         <div class="post-stats">
@@ -97,8 +97,8 @@
                     </div>
 
                     <div class="action-buttons">
-                        <!-- 작성자만 수정/삭제 가능 -->
-                        <div th:if="${session.user != null and session.user.userId == post.user.userId}" class="author-actions">
+                        <!-- 작성자, 관리자만 수정/삭제 가능 -->
+                        <div th:if="${session.user != null and (session.user.userId == post.user.userId or session.user.userId == 'admin')}" class="author-actions">
                             <a th:href="@{/community/{id}/edit(id=${post.id})}" class="btn btn-outline">수정</a>
                             <form th:action="@{/community/{id}/delete(id=${post.id})}" method="post" style="display: inline;">
 <!--                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>-->
@@ -157,17 +157,17 @@
                 <div class="comments-list">
                     <div th:each="comment : ${comments}" class="comment-item">
                         <div class="comment-header">
-                            <img th:src="${comment.author.profileImage != null ? comment.author.profileImage : '/images/default-avatar.png'}"
-                                 th:alt="${comment.author.userName}" class="commenter-avatar">
+<!--                            <img th:src="${comment.author.profileImage != null ? comment.author.profileImage : '/images/default-avatar.png'}"-->
+<!--                                 th:alt="${comment.author.userName}" class="commenter-avatar">-->
                             <div class="commenter-info">
-                                <span class="commenter-name" th:text="${comment.author.userName}">댓글 작성자</span>
-                                <span class="comment-date" th:text="${#temporals.format(comment.createdAt, 'yyyy.MM.dd HH:mm')}">2023.06.01 15:30</span>
+                                <span class="commenter-name" th:text="${comment.user.userId}">댓글 작성자</span>
+                                <span class="comment-date" th:text="${#temporals.format(comment.create_Date, 'yyyy.MM.dd')}">2023.06.01 15:30</span>
                             </div>
                             <div class="comment-actions">
                                 <!-- 댓글 작성자만 수정/삭제 가능 -->
-                                <div th:if="${session.user != null and session.user.id == comment.author.id}">
+                                <div th:if="${session.user != null and (session.user.userId == comment.user.userId or session.user.userId == 'admin')}">
                                     <button class="btn-edit-comment" th:onclick="'editComment(' + ${comment.id} + ')'">수정</button>
-                                    <form th:action="@{/community/comment/{id}/delete(id=${comment.id})}" method="post" style="display: inline;">
+                                    <form th:action="@{/community/comment/{id}/delete/{communityId}(id=${comment.id}, communityId=${post.id})}" method="post" style="display: inline;">
 <!--                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>-->
                                         <button type="submit" class="btn-delete-comment"
                                                 onclick="return confirm('댓글을 삭제하시겠습니까?')">삭제</button>
@@ -175,13 +175,27 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="comment-content">
+                        <div class="comment-content" th:id="'commentContent' + ${comment.id}">
                             <p th:text="${comment.content}">댓글 내용</p>
+                        </div>
+
+                        <!-- 숨겨진 textarea (수정용) -->
+                        <div class="editForm" th:id="'editForm' + ${comment.id}" style="display: none;">
+                            <form th:action="@{/community/comment/update}" method="post" th:id="'editFormInner' + ${comment.id}">
+                                <textarea name="content" th:text="${comment.content}"></textarea>
+                                <input type="hidden" name="commentId" th:value="${comment.id}" />
+                                <input type="hidden" name="communityId" th:value="${post.id}" />
+                                <div class="editButtonGroup">
+                                    <button type="submit" class="editSubmit">수정 완료</button>
+                                    <button type="button" class="editCancel" th:onclick="'cancelEdit(' + ${comment.id} + ')'">취소</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
 
-                    <!-- 댓글이 없을 때 -->
-                    <div th:if="${comments == null or comments.empty}" class="empty-comments">
+
+                        <!-- 댓글이 없을 때 -->
+                    <div th:if="${#lists.isEmpty(comments)}" class="empty-comments">
                         <div class="empty-icon">💬</div>
                         <p>첫 번째 댓글을 작성해보세요!</p>
                     </div>
@@ -227,9 +241,15 @@
     }
 
     function editComment(commentId) {
-        // 댓글 수정 로직
-        console.log('Edit comment:', commentId);
+        document.getElementById("editForm" + commentId).style.display = "block";
+        document.getElementById("commentContent" + commentId).style.display = "none";
     }
+
+    function cancelEdit(commentId) {
+        document.getElementById("editForm" + commentId).style.display = "none";
+        document.getElementById("commentContent" + commentId).style.display = "block";
+    }
+
 </script>
 </body>
 </html>

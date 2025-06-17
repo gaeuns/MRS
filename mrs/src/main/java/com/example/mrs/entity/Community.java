@@ -5,7 +5,9 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -22,11 +24,10 @@ public class Community {
     private int viewCount = 0;
     private int likeCount = 0;
     private int dislikeCount = 0;
+    private int commentCount = 0;
 
     @Transient
     private String previewContent;
-    @Transient
-    private int commentCount;
     @Transient
     private boolean isNew;
     @Transient
@@ -37,6 +38,8 @@ public class Community {
     @JoinColumn(name = "userId", referencedColumnName = "userId")  // 여기서 userId는 User 엔티티의 컬럼명
     private User user;
 
+    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommunityComment> comments = new ArrayList<>();
 
 
 
