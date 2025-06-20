@@ -2,6 +2,8 @@ package com.example.mrs.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -10,25 +12,30 @@ import java.time.LocalDateTime;
 public class Review {
     @Id
     @GeneratedValue
-    private int id;
+    private long id;
     private String title;
 
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
     private int rating;
 
-    @Column(name = "date", columnDefinition = "DATETIME")
-    private LocalDateTime date;
+    private LocalDateTime createdAt;
     private boolean hasSpoiler;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Movie movie;
+    private int likeCount;
+    private int viewCount;
+    private int commentCount;
+    private int dislikeCount;
+
 
     @PrePersist
     protected void onCreate() {
-        this.date = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now();
     }
 }

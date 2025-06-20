@@ -33,13 +33,9 @@
                     <span th:text="${error}">회원가입 중 오류가 발생했습니다.</span>
                 </div>
 
-                <form th:action="@{/adduser}"
-                      th:object="${userInfo}"
-                      method="post"
-                      class="auth-form">
-
+                <form th:action="@{/adduser}" th:object="${userInfo}" method="post" class="auth-form">
                     <!-- 회원가입 성공 모달 -->
-                    <div th:if="${success}" id="successModal" class="modal-overlay">
+                    <div th:if="${success==1}" id="successModal" class="modal-overlay">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h3>🎉 회원가입 완료!</h3>

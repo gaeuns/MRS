@@ -47,28 +47,28 @@
         <!-- 필터 및 검색 -->
         <div class="movies-filter">
             <div class="filter-tabs">
-                <a th:href="@{/movies}"
-                   th:class="${param.category == null} ? 'filter-tab active' : 'filter-tab'">전체</a>
-                <a th:href="@{/movies(category='action')}"
-                   th:class="${param.category == 'action'} ? 'filter-tab active' : 'filter-tab'">액션</a>
-                <a th:href="@{/movies(category='drama')}"
-                   th:class="${param.category == 'drama'} ? 'filter-tab active' : 'filter-tab'">드라마</a>
-                <a th:href="@{/movies(category='comedy')}"
-                   th:class="${param.category == 'comedy'} ? 'filter-tab active' : 'filter-tab'">코미디</a>
-                <a th:href="@{/movies(category='thriller')}"
-                   th:class="${param.category == 'thriller'} ? 'filter-tab active' : 'filter-tab'">스릴러</a>
-                <a th:href="@{/movies(category='romance')}"
-                   th:class="${param.category == 'romance'} ? 'filter-tab active' : 'filter-tab'">로맨스</a>
-                <a th:href="@{/movies(category='horror')}"
-                   th:class="${param.category == 'horror'} ? 'filter-tab active' : 'filter-tab'">공포</a>
-                <a th:href="@{/movies(category='sf')}"
-                   th:class="${param.category == 'sf'} ? 'filter-tab active' : 'filter-tab'">SF</a>
-                <a th:href="@{/movies(category='fantasy')}"
-                   th:class="${param.category == 'fantasy'} ? 'filter-tab active' : 'filter-tab'">판타지</a>
-                <a th:href="@{/movies(category='animation')}"
-                   th:class="${param.category == 'animation'} ? 'filter-tab active' : 'filter-tab'">애니메이션</a>
-                <a th:href="@{/movies(category='documentary')}"
-                   th:class="${param.category == 'documentary'} ? 'filter-tab active' : 'filter-tab'">다큐멘터리</a>
+                <a th:href="@{/movies}" class="filter-tab"
+                   th:classappend="${category == null} ? ' active' : ''">전체</a>
+                <a th:href="@{/movies(category=${'action'})}" class="filter-tab"
+                   th:classappend="${category == 'action'} ? ' active' : ''">액션</a>
+                <a th:href="@{/movies(category=${'drama'})}" class="filter-tab"
+                   th:classappend="${category == 'drama'} ? ' active' : ''">드라마</a>
+                <a th:href="@{/movies(category=${'comedy'})}" class="filter-tab"
+                   th:classappend="${category == 'comedy'} ? ' active' : ''">코미디</a>
+                <a th:href="@{/movies(category=${'thriller'})}" class="filter-tab"
+                   th:classappend="${category == 'thriller'} ? ' active' : ''">스릴러</a>
+                <a th:href="@{/movies(category=${'romance'})}" class="filter-tab"
+                   th:classappend="${category == 'romance'} ? ' active' : ''">로맨스</a>
+                <a th:href="@{/movies(category=${'horror'})}" class="filter-tab"
+                   th:classappend="${category == 'horror'} ? ' active' : ''">공포</a>
+                <a th:href="@{/movies(category=${'sf'})}" class="filter-tab"
+                   th:classappend="${category == 'sf'} ? ' active' : ''">SF</a>
+                <a th:href="@{/movies(category=${'fantasy'})}" class="filter-tab"
+                   th:classappend="${category == 'fantasy'} ? ' active' : ''">판타지</a>
+                <a th:href="@{/movies(category=${'animation'})}" class="filter-tab"
+                   th:classappend="${category == 'animation'} ? ' active' : ''">애니메이션</a>
+                <a th:href="@{/movies(category=${'documentary'})}" class="filter-tab"
+                   th:classappend="${category == 'documentary'} ? ' active' : ''">다큐멘터리</a>
             </div>
 
             <div class="search-sort">
@@ -79,8 +79,8 @@
                            placeholder="영화 제목을 검색하세요" class="search-input">
                     <button type="submit" class="btn btn-primary">검색</button>
                 </form>
-                                                                    <!-- and session.user.role == 'ADMIN'-->
-                <div class="admin-actions" th:if="${session.user != null}">
+
+                <div class="admin-actions" th:if="${session.user != null and session.user.userId == 'admin'}">
                     <a th:href="@{/movie-register}" class="btn btn-admin">
                         <span>+</span> 영화 등록
                     </a>
@@ -107,14 +107,14 @@
             <div th:each="movie : ${movies}" class="movie-card">
                 <a th:href="@{/movie-page/{id}(id=${movie.id})}" class="movie-link">
                     <div class="movie-poster">
-                        <img th:src="${movie.posterUrl != null ? movie.posterUrl : '/placeholder.svg?height=400&width=300'}"
+                        <img th:src="@{${movie.posterUrl} + '?v=' + ${#dates.createNow().getTime()}}"
                              th:alt="${movie.title}" loading="lazy">
                         <div class="movie-overlay">
+                            <div class="movie-year" th:text="${movie.releaseDate}">2023</div>
                             <div class="movie-rating">
                                 <span class="rating-star">★</span>
                                 <span th:text="${movie.averageRating != null ? #numbers.formatDecimal(movie.averageRating, 1, 1) : 'N/A'}">8.5</span>
                             </div>
-                            <div class="movie-year" th:text="${movie.releaseDate}">2023</div>
                         </div>
                     </div>
                     <div class="movie-info">
@@ -127,12 +127,15 @@
 
                         <!-- 리뷰 작성 버튼 추가 -->
                         <div class="movie-actions">
-                            <a th:if="${session.user != null}"
+                            <a th:if="${session.user != null and !movie.hasMyReview}"
                                th:href="@{/movies/{id}/review(id=${movie.id})}"
                                class="btn btn-review">리뷰 작성</a>
                             <a th:if="${session.user == null}"
                                th:href="@{/login}"
                                class="btn btn-review">리뷰 작성</a>
+                            <a th:if="${session.user != null and movie.hasMyReview}"
+                               th:href="@{/movies/{id}/review(id=${movie.id})}"
+                               class="btn btn-review">리뷰 수정</a>
                         </div>
                     </div>
                 </a>

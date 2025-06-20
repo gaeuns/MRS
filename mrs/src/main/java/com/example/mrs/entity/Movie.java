@@ -23,9 +23,13 @@ public class Movie {
     private MultipartFile posterFile;
     private String trailerUrl;
     private String category;
-    private String averageRating;
-    private String reviewCount;
-    private String runtime;
+    private int reviewSum;
+    private int averageRating;
+    private int reviewCount;
+    private int runtime;
     private String country;
     private String rating;
+
+    @Transient
+    private boolean hasMyReview;
 }

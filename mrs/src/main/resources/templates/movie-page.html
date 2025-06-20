@@ -6,6 +6,7 @@
     <title th:text="${movie.title} + ' - 영화 - 무비리뷰'">영화 상세 - 무비리뷰</title>
     <link rel="stylesheet" th:href="@{/main.css}">
     <link rel="stylesheet" th:href="@{/movies.css}">
+    <link rel="stylesheet" th:href="@{/board.css}">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -30,7 +31,7 @@
             </div>
             <div class="auth-buttons" th:if="${session.user == null}">
                 <a th:href="@{/login}" class="btn btn-login">로그인</a>
-                <a th:href="@{/register}" class="btn btn-register">회원가입</a>
+                <a th:href="@{/signup}" class="btn btn-register">회원가입</a>
             </div>
         </div>
     </div>
@@ -46,7 +47,7 @@
         <!-- 영화 정보 섹션 -->
         <div class="movie-detail-header">
             <div class="movie-poster-large">
-                <img th:src="${movie.posterUrl != null ? movie.posterUrl : '/placeholder.svg?height=600&width=400'}"
+                <img th:src="@{${movie.posterUrl} + '?v=' + ${#dates.createNow().getTime()}}"
                      th:alt="${movie.title}">
                 <div class="poster-actions">
                     <button th:if="${session.user != null}" class="btn btn-wishlist"
@@ -65,22 +66,12 @@
                         <span class="rating-score" th:text="${movie.averageRating != null ? #numbers.formatDecimal(movie.averageRating, 1, 1) : 'N/A'}">8.5</span>
                         <span class="rating-count" th:text="'(' + ${movie.reviewCount} + '명 평가)'">( 124명 평가)</span>
                     </div>
-                    <div th:if="${session.user != null}" class="user-rating">
-                        <span>내 평점:</span>
-                        <div class="star-rating">
-                            <span class="star" data-rating="1">☆</span>
-                            <span class="star" data-rating="2">☆</span>
-                            <span class="star" data-rating="3">☆</span>
-                            <span class="star" data-rating="4">☆</span>
-                            <span class="star" data-rating="5">☆</span>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="movie-meta">
                     <div class="meta-item">
                         <span class="meta-label">장르</span>
-                        <span class="meta-value" th:text="${movie.category}">액션, 드라마</span>
+                        <span class="meta-value" th:text="${movie.category}">액션, 드라마, 코미디</span>
                     </div>
                     <div class="meta-item">
                         <span class="meta-label">개봉일</span>
@@ -110,21 +101,24 @@
                 </div>
 
                 <div class="movie-actions">
-                    <a th:if="${session.user != null}" th:href="@{/movies/{id}/review(id=${movie.id})}"
-                       class="btn btn-primary btn-large">
-                        <span>✍️</span> 리뷰 작성하기
-                    </a>
                     <a th:if="${session.user == null}" th:href="@{/login}"
                        class="btn btn-primary btn-large">
-                        <span>✍️</span> 리뷰 작성하기
+                        <span>✍️</span> 리뷰 작성
+                    </a>
+                    <a th:if="${session.user != null and !hasMyReview}"
+                       th:href="@{/movies/{id}/review(id=${movie.id})}"
+                       class="btn btn-primary btn-large">
+                    <span>✍️</span> 리뷰 작성
+                    </a>
+                    <a th:if="${session.user != null and hasMyReview}"
+                        th:href="@{/movies/{id}/review(id=${movie.id})}"
+                       class="btn btn-primary btn-large">
+                        <span>✍️</span> 리뷰 수정
                     </a>
                     <button class="btn btn-secondary">
                         <a th:href="${movie.trailerUrl}" target="_blank" class="btn btn-secondary">
                             <span>🎬</span> 예고편 보기
                         </a>
-                    </button>
-                    <button class="btn btn-outline">
-                        <span>📤</span> 공유하기
                     </button>
                 </div>
             </div>
@@ -145,36 +139,51 @@
 
             <div class="reviews-list">
                 <div th:each="review : ${review}" class="review-item">
-                    <div class="review-header">
-                        <div class="reviewer-info">
-                            <div class="reviewer-details">
-                                <span class="reviewer-name" th:text="${review.user.userName}">리뷰어</span>
-                                <div class="review-meta">
-                                    <div class="review-rating">
-                                            <span th:each="i : ${#numbers.sequence(1, 5)}"
-                                                  th:class="${i <= review.rating} ? 'star filled' : 'star'">★</span>
-                                        <span class="rating-text" th:text="${review.rating} + '점'">5점</span>
+                    <a th:href="@{/review-page/{id}(id=${review.id})}">
+                        <div class="review-header">
+                            <div class="reviewer-info">
+                                <div class="reviewer-details">
+                                    <span class="reviewer-name" th:text="${review.user.userName}">리뷰어</span>
+                                    <div class="review-meta">
+                                        <div class="review-rating">
+                                                <span th:each="i : ${#numbers.sequence(1, 5)}"
+                                                      th:class="${i <= review.rating} ? 'star filled' : 'star'">★</span>
+                                            <span class="rating-text" th:text="${review.rating} + '점'">5점</span>
+                                        </div>
+                                        <span class="review-date" th:text="${review.createdAt}">2023.05.15</span>
                                     </div>
-                                    <span class="review-date" th:text="${review.date}">2023.05.15</span>
                                 </div>
                             </div>
+                            <div class="review-actions">
+                                <!-- 좋아요 버튼 -->
+                                <form th:action="@{'/review/' + ${review.id} + '/like'}" method="post" style="display: inline;">
+                                    <button type="submit" class="btn-helpful"
+                                            th:classappend="${userReview != null and userReview.like} ? 'active' : ''">
+                                        👍 <span th:text="${review.likeCount}">0</span>
+                                    </button>
+                                </form>
+
+                                <!-- 싫어요 버튼 -->
+                                <form th:action="@{'/review/' + ${review.id} + '/dislike'}" method="post" style="display: inline;">
+                                    <button type="submit" class="btn-helpful"
+                                            th:classappend="${userReview != null and userReview.dislike} ? 'active' : ''">
+                                        👎 <span th:text="${review.dislikeCount}">0</span>
+                                    </button>
+                                </form>
+                            </div>
                         </div>
-                        <!--<div class="review-actions">
-                            <button class="btn-helpful" th:classappend="${review.isHelpful} ? 'active' : ''">
-                                <span>👍</span>
-                                <span th:text="${review.helpfulCount}">12</span>
-                            </button>
-                        </div>-->
-                    </div>
-                    <div class="review-content">
+                        <div class="review-content" th:classappend="${review.hasSpoiler} ? 'spoiler-hidden'">
                         <h4 class="review-title" th:text="${review.title}">리뷰 제목</h4>
-                        <p th:text="${review.description}">리뷰 내용이 여기에 표시됩니다. 영화에 대한 상세한 감상과 평가가 포함됩니다.</p>
-                    </div>
+                            <p th:text="${review.description}">
+                                리뷰 내용이 여기에 표시됩니다. 영화에 대한 상세한 감상과 평가가 포함됩니다.
+                            </p>
+                        </div>
+                    </a>
                 </div>
             </div>
 
             <!-- 리뷰가 없을 때 -->
-            <div th:if="${review == null}" class="empty-reviews">
+            <div th:if="${movie.reviewCount == 0}" class="empty-reviews">
                 <div class="empty-icon">📝</div>
                 <h3>아직 리뷰가 없습니다</h3>
                 <p>이 영화의 첫 번째 리뷰를 작성해보세요!</p>

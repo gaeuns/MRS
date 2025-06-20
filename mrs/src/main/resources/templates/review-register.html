@@ -39,7 +39,7 @@
         <div class="breadcrumb">
             <a th:href="@{/}">홈</a> > <a th:href="@{/movies}">영화</a> >
             <a th:href="@{/movies/{id}(id=${movie.id})}" th:text="${movie.title}">영화 제목</a> >
-            <span th:text="${review != null ? '리뷰 수정' : '리뷰 작성'}">리뷰 작성</span>
+            <span th:text="${hasReview ? '리뷰 수정' : '리뷰 작성'}">리뷰 작성</span>
         </div>
 
         <div class="review-write-container">
@@ -65,7 +65,7 @@
             </div>
 
             <!-- 리뷰 작성 폼 -->
-            <form th:action="${review != null ? '/movies/' + movie.id + '/review/' + review.id + '/edit' : '/movies/' + movie.id + '/review'}"
+            <form th:action="${hasReview ? '/movies/' + movie.id + '/review/' + review.id + '/edit' : '/movies/' + movie.id + '/review'}"
                   method="post" class="review-form">
                 <input type="hidden" name="movie.id" th:value="${movie.id}" />
 
@@ -137,7 +137,7 @@
                 <!-- 버튼 영역 -->
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary">
-                        <span th:text="${review != null ? '수정하기' : '작성하기'}">작성하기</span>
+                        <span th:text="${hasReview ? '수정하기' : '작성하기'}">작성하기</span>
                     </button>
                     <a th:href="@{/movies/{id}(id=${movie.id})}" class="btn btn-secondary">취소</a>
                 </div>

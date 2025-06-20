@@ -1,6 +1,10 @@
 package com.example.mrs.controller;
 
+import com.example.mrs.entity.Movie;
+import com.example.mrs.entity.Review;
 import com.example.mrs.entity.User;
+import com.example.mrs.repository.MovieRepository;
+import com.example.mrs.repository.ReviewRepository;
 import com.example.mrs.repository.UserRepository;
 import com.example.mrs.dto.UserDTO;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,13 +16,17 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 
+import java.util.List;
 import java.util.Objects;
 
 @Controller
 @RequiredArgsConstructor
 public class UserController {
     private final UserRepository userRepository;
+    private final MovieRepository movieRepository;
+    private final ReviewRepository reviewRepository;
 
     //회원가입
     @GetMapping("/signup")
@@ -40,7 +48,6 @@ public class UserController {
             return "signup";
         }
 
-        //user.setUserPassword(user.getUserPassword());
         userRepository.save(user);
 
         model.addAttribute("success", true);
@@ -49,13 +56,19 @@ public class UserController {
 
     //로그인
     @GetMapping("/login")
-    public String login(Model model) {
+    public String login(HttpServletRequest request, HttpSession session, Model model) {
+        String referer = request.getHeader("Referer");
+        if (referer != null && !referer.contains("/login")) {
+            session.setAttribute("prevPage", referer);
+        }
+
         model.addAttribute("userInfo", new User());
+
         return "login";
     }
 
     @PostMapping("/login")
-    public String postMain(@ModelAttribute("userInfo") User user, BindingResult result, HttpSession session) {
+    public String postMain(@ModelAttribute("userInfo") User user, BindingResult result, HttpSession session, Model model) {
         var dbUser = userRepository.findByUserId(user.getUserId()).orElse(null);
 
         if (dbUser == null) {
@@ -68,7 +81,15 @@ public class UserController {
             return "login";
         }
         session.setAttribute("user", UserDTO.fromEntity(dbUser));
-        return "main";
+
+        List<Movie> movies = movieRepository.findAll();
+        model.addAttribute("movie", movies);
+
+        List<Review> reviews = reviewRepository.findAll();
+        model.addAttribute("review", reviews);
+
+        String redirectUrl = (String) session.getAttribute("prevPage");
+        return "redirect:" + (redirectUrl != null ? redirectUrl : "/");
     }
 
     //로그아웃

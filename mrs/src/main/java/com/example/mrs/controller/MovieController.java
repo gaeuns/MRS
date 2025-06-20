@@ -1,9 +1,13 @@
 package com.example.mrs.controller;
 
+import com.example.mrs.dto.UserDTO;
 import com.example.mrs.entity.Movie;
 import com.example.mrs.entity.Review;
+import com.example.mrs.entity.User;
 import com.example.mrs.repository.MovieRepository;
 import com.example.mrs.repository.ReviewRepository;
+import com.example.mrs.repository.UserRepository;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.data.domain.Page;
@@ -24,6 +28,7 @@ import java.util.*;
 public class MovieController {
     private final MovieRepository movieRepository;
     private final ReviewRepository reviewRepository;
+    private final UserRepository userRepository;
 
     //영화 목록
     @GetMapping("/movies")
@@ -31,6 +36,7 @@ public class MovieController {
                          @RequestParam(required = false) String sort,
                          @RequestParam(required = false) String keyword,
                          @RequestParam(defaultValue = "0") int page,
+                         HttpSession session,
                          Model model) {
 
         Pageable pageable = switch (sort != null ? sort : "") {
@@ -53,7 +59,22 @@ public class MovieController {
             moviePage = movieRepository.findAll(pageable);
         }
 
-        model.addAttribute("movies", moviePage.getContent());
+        List<Movie> movieList = moviePage.getContent();
+
+        UserDTO userDTO = (UserDTO) session.getAttribute("user");
+        User user = null;
+        if (userDTO != null) {
+            user = userRepository.findByUserId(userDTO.getUserId()).orElse(null);
+        }
+
+        if (user != null) {
+            for (Movie movie : moviePage.getContent()) {
+                boolean hasReview = reviewRepository.existsByMovieAndUser(movie, user);
+                movie.setHasMyReview(hasReview);
+            }
+        }
+
+        model.addAttribute("movies", movieList);
         model.addAttribute("moviePage", moviePage);
 
         Map<String, String> param = new HashMap<>();
@@ -61,6 +82,7 @@ public class MovieController {
         param.put("sort", sort != null ? sort : "");
         param.put("keyword", keyword != null ? keyword : "");
         model.addAttribute("param", param);
+        model.addAttribute("category", category);
 
         return "movies";
     }
@@ -78,44 +100,38 @@ public class MovieController {
     public String addMovie(@ModelAttribute("movies") Movie movie, @RequestParam("posterFile") MultipartFile posterFile,
                            Model model) throws IOException {
 
-        String uploadDir = new File("src/main/resources/static/uploads").getAbsolutePath();
+        String uploadDir = new File("uploads").getAbsolutePath();
         String fileName = UUID.randomUUID() + "_" + posterFile.getOriginalFilename();
         File destination = new File(uploadDir, fileName);
         posterFile.transferTo(destination);
 
         movie.setPosterUrl("/uploads/" + fileName);
 
-        movieRepository.save(movie);
+        movieRepository.saveAndFlush(movie);
         model.addAttribute("success", true);
 
-        return "movies";
+        return "redirect:/movies";
     }
 
     //영화 상세
     @GetMapping("/movie-page/{id}")
-    public String moviePage(@PathVariable long id, Model model) {
+    public String moviePage(@PathVariable long id, HttpSession session, Model model) {
         Movie movie = movieRepository.findById(id).get();
         model.addAttribute("movie", movie);
 
         List<Review> review = reviewRepository.findByMovie(movie);
         model.addAttribute("review", review);
 
+        if(session.getAttribute("user") != null) {
+            UserDTO userDTO = (UserDTO) session.getAttribute("user");
+            Optional<User> userOptional = userRepository.findByUserId(userDTO.getUserId());
+            User user = userOptional.get();
+
+            boolean hasWrittenReview = reviewRepository.existsByMovieAndUser(movie, user);
+            model.addAttribute("hasMyReview", hasWrittenReview);
+        }
+
         return "movie-page";
     }
-
-    // 리뷰 수정
-    /*@PostMapping("/movie-page/{movieId}/review/{reviewId}/edit")
-    public String updateReview(@PathVariable Long movieId,
-                               @PathVariable Long reviewId,
-                               Review reviewData) {
-        Review review = reviewRepository.findById(Math.toIntExact(reviewId))
-                .orElseThrow(() -> new IllegalArgumentException("리뷰가 존재하지 않습니다."));
-        review.setRating(reviewData.getRating());
-        review.setDescription(reviewData.getDescription());
-        review.setHasSpoiler(reviewData.isHasSpoiler());
-        reviewRepository.save(review);
-        return "redirect:/movie-page/" + movieId;
-    }*/
-
 
 }
