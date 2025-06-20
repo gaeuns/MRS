@@ -92,7 +92,7 @@ public class ReviewController {
         Review review = reviewRepository.findById(id).orElseThrow();
 
         // 3. 기존에 해당 유저가 해당 리뷰에 대한 기록이 있는지 확인
-        UserReview ur = userReviewRepository.findByUserAndReview(user, review).orElse(new UserReview());
+        UserReview ur = userReviewRepository.findByUser_UserIdAndReview(userDTO.getUserId(), review).orElse(new UserReview());
         boolean likedBefore = ur.isLike();
 
         // 4. 상태 전환 처리
@@ -134,7 +134,7 @@ public class ReviewController {
         Review review = reviewRepository.findById(id).orElseThrow();
 
         // 3. 기존에 해당 유저가 해당 리뷰에 대한 기록이 있는지 확인
-        UserReview ur = userReviewRepository.findByUserAndReview(user, review).orElse(new UserReview());
+        UserReview ur = userReviewRepository.findByUser_UserIdAndReview(userDTO.getUserId(), review).orElse(new UserReview());
         boolean dislikedBefore = ur.isDislike();
 
         // 4. 상태 전환 처리
@@ -177,28 +177,14 @@ public class ReviewController {
 
         if (session.getAttribute("user") != null) {
             UserDTO userDTO = (UserDTO) session.getAttribute("user");
-            Optional<User> userOptional = userRepository.findByUserId(userDTO.getUserId());
-            User user = userOptional.orElseThrow();
 
-            boolean hasWrittenReview = reviewRepository.existsByUser(user);
-            model.addAttribute("hasMyReview", hasWrittenReview);
-        }
-
-        if (session.getAttribute("user") != null) {
-            UserDTO userDTO = (UserDTO) session.getAttribute("user");
-            Optional<User> userOptional = userRepository.findByUserId(userDTO.getUserId());
-            User user = userOptional.get();
-
-            boolean hasWrittenReview = reviewRepository.existsByUser(user);
+            boolean hasWrittenReview = reviewRepository.existsByUser_UserId(userDTO.getUserId());
             model.addAttribute("hasMyReview", hasWrittenReview);
 
-            //평가 여부 확인 (도움됨 / 안됨)
-            Optional<UserReview> userReviewOpt = userReviewRepository.findByUserAndReview(user, review);
-            boolean evaluatedLike = userReviewOpt.map(UserReview::isLike).orElse(false);
-            boolean evaluatedDislike = userReviewOpt.map(UserReview::isDislike).orElse(false);
-
-            model.addAttribute("evaluatedLikeByCurrentUser", evaluatedLike);
-            model.addAttribute("evaluatedDislikeByCurrentUser", evaluatedDislike);
+            Optional<UserReview> userReviewOpt =
+                    userReviewRepository.findByUser_UserIdAndReview(userDTO.getUserId(), review);
+            model.addAttribute("evaluatedLikeByCurrentUser", userReviewOpt.map(UserReview::isLike).orElse(false));
+            model.addAttribute("evaluatedDislikeByCurrentUser", userReviewOpt.map(UserReview::isDislike).orElse(false));
         }
 
         review.setViewCount(review.getViewCount() + 1);

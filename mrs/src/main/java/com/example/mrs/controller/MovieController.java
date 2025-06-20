@@ -3,7 +3,6 @@ package com.example.mrs.controller;
 import com.example.mrs.dto.UserDTO;
 import com.example.mrs.entity.Movie;
 import com.example.mrs.entity.Review;
-import com.example.mrs.entity.User;
 import com.example.mrs.repository.MovieRepository;
 import com.example.mrs.repository.ReviewRepository;
 import com.example.mrs.repository.UserRepository;
@@ -62,14 +61,9 @@ public class MovieController {
         List<Movie> movieList = moviePage.getContent();
 
         UserDTO userDTO = (UserDTO) session.getAttribute("user");
-        User user = null;
         if (userDTO != null) {
-            user = userRepository.findByUserId(userDTO.getUserId()).orElse(null);
-        }
-
-        if (user != null) {
             for (Movie movie : moviePage.getContent()) {
-                boolean hasReview = reviewRepository.existsByMovieAndUser(movie, user);
+                boolean hasReview = reviewRepository.existsByMovieAndUser_UserId(movie, userDTO.getUserId());
                 movie.setHasMyReview(hasReview);
             }
         }
@@ -116,7 +110,8 @@ public class MovieController {
     //영화 상세
     @GetMapping("/movie-page/{id}")
     public String moviePage(@PathVariable long id, HttpSession session, Model model) {
-        Movie movie = movieRepository.findById(id).get();
+        Movie movie = movieRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("영화를 찾을 수 없습니다"));
         model.addAttribute("movie", movie);
 
         List<Review> review = reviewRepository.findByMovie(movie);
@@ -124,10 +119,8 @@ public class MovieController {
 
         if(session.getAttribute("user") != null) {
             UserDTO userDTO = (UserDTO) session.getAttribute("user");
-            Optional<User> userOptional = userRepository.findByUserId(userDTO.getUserId());
-            User user = userOptional.get();
 
-            boolean hasWrittenReview = reviewRepository.existsByMovieAndUser(movie, user);
+            boolean hasWrittenReview = reviewRepository.existsByMovieAndUser_UserId(movie, userDTO.getUserId());
             model.addAttribute("hasMyReview", hasWrittenReview);
         }
 

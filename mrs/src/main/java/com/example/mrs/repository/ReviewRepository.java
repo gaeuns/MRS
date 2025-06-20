@@ -13,9 +13,10 @@ import java.util.Optional;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findByMovie(Movie movie);
+    List<Review> findByUser_UserId(String userId);
 
-    boolean existsByUser(User user);
-    boolean existsByMovieAndUser(Movie movie, User user);
+    boolean existsByUser_UserId(String userId);
+    boolean existsByMovieAndUser_UserId(Movie movie, String userId);
 
     Optional<Review> findFirstByMovieAndUser(Movie movie, User user);
 
