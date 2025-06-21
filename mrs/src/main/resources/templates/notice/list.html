@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공지사항 - 무비리뷰</title>
+    <!-- 공통 스타일 시트 연결 -->
+    <link rel="stylesheet" th:href="@{/main.css}">
+    <link rel="stylesheet" th:href="@{/board.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="site-header">
+    <div class="container">
+        <!-- 로고 영역 -->
+        <div class="logo">
+            <h1><a th:href="@{/}">무비리뷰</a></h1>
+        </div>
+        <!-- 상단 네비게이션 -->
+        <nav class="main-nav">
+            <ul>
+                <li><a th:href="@{/}">홈</a></li>
+                <li><a th:href="@{/movies}">영화</a></li>
+                <li><a th:href="@{/community}">커뮤니티</a></li>
+                <li><a th:href="@{/notice}">공지사항</a></li>
+            </ul>
+        </nav>
+
+        <!-- 로그인 상태에 따른 사용자 영역 -->
+        <div class="user-actions">
+            <!-- 로그인한 경우 -->
+            <div class="user-profile" th:if="${session.user != null}">
+                <span th:text="${session.user.userName}">사용자</span>
+                <a th:href="@{/mypage}" class="profile-link">마이페이지</a>
+                <a th:href="@{/logout}" class="logout-link">로그아웃</a>
+            </div>
+
+            <!-- 로그인하지 않은 경우 -->
+            <div class="auth-buttons" th:if="${session.user == null}">
+                <a th:href="@{/login}" class="btn btn-login">로그인</a>
+                <a th:href="@{/register}" class="btn btn-register">회원가입</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="board-main">
+    <div class="container">
+
+        <!-- 페이지 상단 헤더 설명 -->
+        <div class="board-header">
+            <h1>공지사항</h1>
+            <p>무비리뷰의 새로운 소식과 중요한 안내사항을 확인하세요!</p>
+            <!-- 빵부레드 네비게이션 -->
+            <div class="breadcrumb">
+                <a th:href="@{/}">홈</a> > <span>공지사항</span>
+            </div>
+        </div>
+
+        <!-- 공지사항 필터 및 검색 -->
+        <div class="board-filter">
+            <div class="filter-tabs">
+                <!-- 전체 / 중요공지 / 일반공지 필터 -->
+                <a th:href="@{/notice}" th:class="${importance == null} ? 'filter-tab active' : 'filter-tab'">전체</a>
+                <a th:href="@{/notice(importance='IMPORTANT')}" th:class="${importance == 'IMPORTANT'} ? 'filter-tab active' : 'filter-tab'">중요 공지</a>
+                <a th:href="@{/notice(importance='NORMAL')}" th:class="${importance == 'NORMAL'} ? 'filter-tab active' : 'filter-tab'">일반 공지</a>
+            </div>
+
+            <!-- 검색 및 정렬 -->
+            <div class="search-sort">
+                <!-- 검색 폼 (검색 입력 유지 위해 hidden input 포함) -->
+                <form th:action="@{/notice}" method="get" class="search-form">
+                    <input type="hidden" name="importance" th:value="${param.importance}">
+                    <input type="hidden" name="sort" th:value="${param.sort}">
+                    <input type="text" name="keyword" th:value="${param.keyword}" placeholder="제목이나 내용을 검색하세요" class="search-input">
+                    <button type="submit" class="btn btn-primary">검색</button>
+                </form>
+
+                <!-- 관리자일 경우 공지 작성 버튼 표시 -->
+                <div th:if="${session.user != null and session.user.userRole.name() == 'ADMIN'}">
+                    <a th:href="@{/notice/write}" class="btn btn-write">
+                        <span>✍️</span> 공지 작성
+                    </a>
+                </div>
+
+                <!-- 정렬 선택 -->
+                <div class="sort-options">
+                    <select onchange="location.href=this.value" class="sort-select">
+                        <option value="" th:selected="${param.sort == null}">정렬 기준</option>
+                        <option th:value="@{/notice(importance=${param.importance}, keyword=${param.keyword}, sort='latest')}" th:selected="${param.sort == 'latest'}">최신순</option>
+                        <option th:value="@{/notice(importance=${param.importance}, keyword=${param.keyword}, sort='views')}" th:selected="${param.sort == 'views'}">조회순</option>
+                        <option th:value="@{/notice(importance=${param.importance}, keyword=${param.keyword}, sort='title')}" th:selected="${param.sort == 'title'}">제목순</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- 공지사항 목록 영역 -->
+        <div class="board-list">
+
+            <!-- 중요 공지사항 반복 출력 -->
+            <div th:each="notice : ${importantNotices}" class="notice-item important">
+                <div class="notice-header">
+                    <div class="notice-content-area">
+                        <div class="notice-badges">
+                            <span class="notice-badge important">중요</span>
+                            <span th:if="${notice.isNew}" class="new-badge">NEW</span>
+                        </div>
+                        <h3 class="notice-title">
+                            <a th:href="@{/notice/{id}(id=${notice.id})}" th:text="${notice.title}">중요한 공지사항 제목</a>
+                        </h3>
+                        <div class="notice-meta">
+                            <span class="notice-author" th:text="${notice.author}">작성자</span>
+                            <span class="notice-date" th:text="${#temporals.format(notice.createdAt, 'yyyy.MM.dd')}">작성일</span>
+                            <span class="notice-views" th:text="'조회 ' + ${notice.viewCount}">조회수</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 일반 공지사항 반복 출력 -->
+            <div th:each="notice : ${notices}" class="notice-item">
+                <div class="notice-header">
+                    <div class="notice-content-area">
+                        <div class="notice-badges">
+                            <span class="notice-badge normal">공지</span>
+                            <span th:if="${notice.isNew}" class="new-badge">NEW</span>
+                        </div>
+                        <h3 class="notice-title">
+                            <a th:href="@{/notice/{id}(id=${notice.id})}" th:text="${notice.title}">공지사항 제목</a>
+                        </h3>
+                        <div class="notice-meta">
+                            <span class="notice-author" th:text="${notice.author}">작성자</span>
+                            <span class="notice-date" th:text="${#temporals.format(notice.createdAt, 'yyyy.MM.dd')}">작성일</span>
+                            <span class="notice-views" th:text="'조회 ' + ${notice.viewCount}">조회수</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 검색 결과 없음 처리 -->
+        <div th:if="${(notices == null or notices.empty) and (importantNotices == null or importantNotices.empty)}" class="empty-board">
+            <div class="empty-icon">📢</div>
+            <h3>공지사항이 없습니다</h3>
+            <p th:if="${param.keyword != null}">검색 결과가 없습니다. 다른 검색어로 시도해보세요.</p>
+            <p th:if="${param.keyword == null}">아직 등록된 공지사항이 없습니다.</p>
+        </div>
+
+        <!-- 페이지네이션 영역 -->
+        <div th:if="${noticePage != null and noticePage.totalPages > 1}" class="pagination">
+            <!-- 이전 페이지 버튼 -->
+            <a th:if="${noticePage.hasPrevious()}"
+               th:href="@{/notice(page=${noticePage.number - 1}, importance=${param.importance}, keyword=${param.keyword}, sort=${param.sort})}" class="page-btn">이전</a>
+
+            <!-- 현재 페이지 주변 5개만 출력 -->
+            <span th:each="i : ${#numbers.sequence(0, noticePage.totalPages - 1)}"
+                  th:if="${i >= noticePage.number - 2 and i <= noticePage.number + 2}"
+                  th:class="${i == noticePage.number} ? 'page-btn active' : 'page-btn'">
+                <a th:href="@{/notice(page=${i}, importance=${param.importance}, keyword=${param.keyword}, sort=${param.sort})}" th:text="${i + 1}">1</a>
+            </span>
+
+            <!-- 다음 페이지 버튼 -->
+            <a th:if="${noticePage.hasNext()}"
+               th:href="@{/notice(page=${noticePage.number + 1}, importance=${param.importance}, keyword=${param.keyword}, sort=${param.sort})}" class="page-btn">다음</a>
+        </div>
+
+        <!-- 공지사항 안내 영역 -->
+        <div class="notice-guide">
+            <h4>📋 공지사항 안내</h4>
+            <ul>
+                <li><strong>중요 공지:</strong> 서비스 점검, 정책 변경 등 반드시 확인해야 할 사항</li>
+                <li><strong>일반 공지:</strong> 업데이트, 이벤트 등 참고용 안내</li>
+                <li>중요 공지는 목록 상단 고정</li>
+                <li>문의사항은 고객센터 이용 권장</li>
+            </ul>
+        </div>
+    </div>
+</main>
+
+<!-- 푸터 -->
+<footer class="site-footer">
+    <div class="container">
+        <p>&copy; 2025 무비리뷰. All rights reserved.</p>
+    </div>
+</footer>
+
+</body>
+</html>
