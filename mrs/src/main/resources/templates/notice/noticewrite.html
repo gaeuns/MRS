@@ -32,7 +32,11 @@
 <main class="board-main">
     <div class="container">
         <h2>공지사항 작성</h2>
+<<<<<<< HEAD
         <form th:action="@{/notice/write}" method="post" enctype="multipart/form-data" class="write-form">
+=======
+        <form th:action="@{/notice/write}" method="post" class="write-form">
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
 
             <!-- 중요도 (드롭다운) -->
             <div class="form-group">
@@ -56,12 +60,15 @@
                 <textarea name="content" class="form-textarea" required></textarea>
             </div>
 
+<<<<<<< HEAD
             <!-- 이미지 첨부 -->
             <div class="form-group">
                 <label class="form-label">첨부 이미지</label>
                 <input type="file" name="imageFile" class="form-input" accept="image/*">
             </div>
 
+=======
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
             <!-- 작성자 -->
             <div class="form-group">
                 <label class="form-label">작성자</label>

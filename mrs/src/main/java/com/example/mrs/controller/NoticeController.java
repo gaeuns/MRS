@@ -9,7 +9,13 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+<<<<<<< HEAD
 import org.springframework.web.multipart.MultipartFile;
+=======
+
+import java.util.List;
+import java.util.Optional;
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
 
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +29,7 @@ public class NoticeController {
     // 공지사항 레포지토리 의존성 주입
     private final NoticeRepository noticeRepository;
 
+<<<<<<< HEAD
     // 공지사항 목록 페이지
     @GetMapping
     public String noticeList(Model model,
@@ -88,10 +95,33 @@ public class NoticeController {
         param.put("keyword", keyword);
         param.put("sort", sort);
         model.addAttribute("param", param);
+=======
+    //  공지사항 목록 페이지
+    @GetMapping
+    public String noticeList(Model model,
+                             @PageableDefault(size = 10) Pageable pageable,
+                             @RequestParam(required = false) String importance) {
+
+        Page<Notice> noticePage;
+
+        if (importance != null) {
+            noticePage = noticeRepository.findByImportance(importance, pageable);
+            model.addAttribute("importantNotices", List.of());
+        } else {
+            List<Notice> importantNotices = noticeRepository.findByImportance("IMPORTANT");
+            noticePage = noticeRepository.findByImportance("NORMAL", pageable);
+            model.addAttribute("importantNotices", importantNotices);
+        }
+
+        model.addAttribute("notices", noticePage.getContent());
+        model.addAttribute("noticePage", noticePage);
+        model.addAttribute("param", importance);
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
 
         return "notice/list";
     }
 
+<<<<<<< HEAD
     // 공지사항 작성 폼
     @GetMapping("/write")
     public String showWriteForm(Model model, HttpSession session) {
@@ -122,22 +152,46 @@ public class NoticeController {
         }
 
         // 작성자 세션에서 설정
+=======
+    //  공지 작성 폼
+    @GetMapping("/write")
+    public String showWriteForm(Model model, HttpSession session) {
+        Object user = session.getAttribute("user");
+        if (!(user instanceof UserDTO dto) || !"ADMIN".equals(dto.getUserRole().name())) {
+            return "redirect:/notice";
+        }
+        model.addAttribute("notice", new Notice());
+        return "notice/noticewrite";
+    }
+
+    //  공지 작성 처리
+    @PostMapping("/write")
+    public String submitNotice(@ModelAttribute Notice notice, HttpSession session) {
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
         Object user = session.getAttribute("user");
         if (user instanceof UserDTO dto) {
             notice.setAuthor(dto.getUserName());
         }
+<<<<<<< HEAD
 
         // DB 저장
+=======
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
         noticeRepository.save(notice);
         return "redirect:/notice";
     }
 
+<<<<<<< HEAD
     // 공지사항 상세 보기
+=======
+    //  공지 상세 보기
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
     @GetMapping("/{id}")
     public String viewNotice(@PathVariable Long id, Model model, HttpSession session) {
         Optional<Notice> noticeOpt = noticeRepository.findById(id);
         if (noticeOpt.isPresent()) {
             Notice notice = noticeOpt.get();
+<<<<<<< HEAD
 
             // 조회수 1 증가
             notice.setViewCount(notice.getViewCount() + 1);
@@ -146,6 +200,13 @@ public class NoticeController {
             model.addAttribute("notice", notice);
 
             // 로그인한 사용자 정보 전달 (관리자 버튼 제어에 활용)
+=======
+            notice.setViewCount(notice.getViewCount() + 1);
+            noticeRepository.save(notice);
+            model.addAttribute("notice", notice);
+
+            //  sessionUser 모델에 담기
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
             Object user = session.getAttribute("user");
             if (user instanceof UserDTO dto) {
                 model.addAttribute("sessionUser", dto);
@@ -157,10 +218,16 @@ public class NoticeController {
         }
     }
 
+<<<<<<< HEAD
     // 공지사항 수정 폼
     @GetMapping("/edit/{id}")
     public String editForm(@PathVariable Long id, Model model, HttpSession session) {
         // 관리자 권한 확인
+=======
+    //  공지 수정 폼
+    @GetMapping("/edit/{id}")
+    public String editForm(@PathVariable Long id, Model model, HttpSession session) {
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
         Object user = session.getAttribute("user");
         if (!(user instanceof UserDTO dto) || !"ADMIN".equals(dto.getUserRole().name())) {
             return "redirect:/notice";
@@ -175,6 +242,7 @@ public class NoticeController {
         }
     }
 
+<<<<<<< HEAD
     // 공지사항 수정 처리
     @PostMapping("/edit/{id}")
     public String updateNotice(@PathVariable Long id,
@@ -183,6 +251,13 @@ public class NoticeController {
                                HttpSession session) throws IOException {
 
         // 관리자 권한 확인
+=======
+    //  공지 수정 처리
+    @PostMapping("/edit/{id}")
+    public String updateNotice(@PathVariable Long id,
+                               @ModelAttribute Notice updatedNotice,
+                               HttpSession session) {
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
         Object user = session.getAttribute("user");
         if (!(user instanceof UserDTO dto) || !"ADMIN".equals(dto.getUserRole().name())) {
             return "redirect:/notice";
@@ -191,6 +266,7 @@ public class NoticeController {
         Optional<Notice> noticeOpt = noticeRepository.findById(id);
         if (noticeOpt.isPresent()) {
             Notice notice = noticeOpt.get();
+<<<<<<< HEAD
 
             // 수정 항목 반영
             notice.setTitle(updatedNotice.getTitle());
@@ -208,16 +284,27 @@ public class NoticeController {
                 notice.setImagePath("/uploads/" + fileName);
             }
 
+=======
+            notice.setTitle(updatedNotice.getTitle());
+            notice.setContent(updatedNotice.getContent());
+            notice.setImportance(updatedNotice.getImportance());
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
             noticeRepository.save(notice);
         }
 
         return "redirect:/notice/" + id;
     }
 
+<<<<<<< HEAD
     // 공지사항 삭제 처리
     @PostMapping("/delete/{id}")
     public String deleteNotice(@PathVariable Long id, HttpSession session) {
         // 관리자 권한 확인
+=======
+    //  공지 삭제 처리
+    @PostMapping("/delete/{id}")
+    public String deleteNotice(@PathVariable Long id, HttpSession session) {
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
         Object user = session.getAttribute("user");
         if (!(user instanceof UserDTO dto) || !"ADMIN".equals(dto.getUserRole().name())) {
             return "redirect:/notice";
@@ -226,4 +313,8 @@ public class NoticeController {
         noticeRepository.deleteById(id);
         return "redirect:/notice";
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae

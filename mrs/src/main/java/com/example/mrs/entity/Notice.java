@@ -22,6 +22,7 @@ public class Notice {
     @Column(length = 2000)  // 공지 내용 (최대 2000자)
     private String content;
 
+<<<<<<< HEAD
     // 작성자 이름 (문자열만 저장, User 엔티티와 별개로 단순 이름 저장)
     private String author;
 
@@ -32,17 +33,34 @@ public class Notice {
     private String imagePath;
 
     // 조회수 (기본 0, 상세페이지 접근시 증가)
+=======
+    // 사용자 이름 (저장용, 외래키 아님)
+    private String author;
+
+    @Column(nullable = false)
+    private String importance;
+
+    private int likeCount = 0;
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
     private int viewCount;
 
     // 생성일 (공지 작성 시간 기록, 객체 생성 시 자동 기록)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+<<<<<<< HEAD
     // 작성자 사용자 객체와 연관관계 설정 (다대일 관계: 한 명의 사용자가 여러 개의 공지 작성 가능)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")  // 외래키 이름 지정 (notice 테이블의 user_id 컬럼)
     private User user;
 
     // 최근 3일 이내 작성된 새 글인지 여부를 판별하는 유틸리티 메서드
+=======
+    // 실제 작성자 객체 (외래키 연관관계 설정)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")  // FK: notice.user_id → user.id
+    private User user;
+
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
     public boolean isNew() {
         return createdAt != null && createdAt.isAfter(LocalDateTime.now().minusDays(3));
     }

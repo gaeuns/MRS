@@ -60,15 +60,27 @@
         <!-- 공지사항 필터 및 검색 -->
         <div class="board-filter">
             <div class="filter-tabs">
+<<<<<<< HEAD
                 <!-- 전체 / 중요공지 / 일반공지 필터 -->
                 <a th:href="@{/notice}" th:class="${param.importance == null} ? 'filter-tab active' : 'filter-tab'">전체</a>
                 <a th:href="@{/notice(importance='IMPORTANT')}" th:class="${param.importance == 'IMPORTANT'} ? 'filter-tab active' : 'filter-tab'">중요 공지</a>
                 <a th:href="@{/notice(importance='NORMAL')}" th:class="${param.importance == 'NORMAL'} ? 'filter-tab active' : 'filter-tab'">일반 공지</a>
+=======
+                <a th:href="@{/notice}"
+                   th:class="${param.importance == null} ? 'filter-tab active' : 'filter-tab'">전체</a>
+                <a th:href="@{/notice(importance='IMPORTANT')}"
+                   th:class="${param.importance == 'IMPORTANT'} ? 'filter-tab active' : 'filter-tab'">중요 공지</a>
+                <a th:href="@{/notice(importance='NORMAL')}"
+                   th:class="${param.importance == 'NORMAL'} ? 'filter-tab active' : 'filter-tab'">일반 공지</a>
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
             </div>
 
             <!-- 검색 및 정렬 -->
             <div class="search-sort">
+<<<<<<< HEAD
                 <!-- 검색 폼 (검색 입력 유지 위해 hidden input 포함) -->
+=======
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
                 <form th:action="@{/notice}" method="get" class="search-form">
                     <input type="hidden" name="importance" th:value="${param.importance}">
                     <input type="hidden" name="sort" th:value="${param.sort}">
@@ -87,9 +99,18 @@
                 <div class="sort-options">
                     <select onchange="location.href=this.value" class="sort-select">
                         <option value="" th:selected="${param.sort == null}">정렬 기준</option>
+<<<<<<< HEAD
                         <option th:value="@{/notice(importance=${param.importance}, keyword=${param.keyword}, sort='latest')}" th:selected="${param.sort == 'latest'}">최신순</option>
                         <option th:value="@{/notice(importance=${param.importance}, keyword=${param.keyword}, sort='views')}" th:selected="${param.sort == 'views'}">조회순</option>
                         <option th:value="@{/notice(importance=${param.importance}, keyword=${param.keyword}, sort='title')}" th:selected="${param.sort == 'title'}">제목순</option>
+=======
+                        <option th:value="@{/notice(importance=${param.importance}, keyword=${param.keyword}, sort='latest')}"
+                                th:selected="${param.sort == 'latest'}">최신순</option>
+                        <option th:value="@{/notice(importance=${param.importance}, keyword=${param.keyword}, sort='views')}"
+                                th:selected="${param.sort == 'views'}">조회순</option>
+                        <option th:value="@{/notice(importance=${param.importance}, keyword=${param.keyword}, sort='title')}"
+                                th:selected="${param.sort == 'title'}">제목순</option>
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
                     </select>
                 </div>
             </div>
@@ -97,8 +118,12 @@
 
         <!-- 공지사항 목록 영역 -->
         <div class="board-list">
+<<<<<<< HEAD
 
             <!-- 중요 공지사항 반복 출력 -->
+=======
+            <!-- 중요 공지사항 -->
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
             <div th:each="notice : ${importantNotices}" class="notice-item important">
                 <div class="notice-header">
                     <div class="notice-content-area">
@@ -111,7 +136,11 @@
                         </h3>
                         <div class="notice-meta">
                             <span class="notice-author" th:text="${notice.author}">작성자</span>
+<<<<<<< HEAD
                             <span class="notice-date" th:text="${#temporals.format(notice.createdAt, 'yyyy.MM.dd')}">작성일</span>
+=======
+                            <span class="notice-date" th:text="${#temporals.format(notice.createdAt, 'yyyy.MM.dd')}">날짜</span>
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
                             <span class="notice-views" th:text="'조회 ' + ${notice.viewCount}">조회수</span>
                         </div>
                     </div>
@@ -131,7 +160,11 @@
                         </h3>
                         <div class="notice-meta">
                             <span class="notice-author" th:text="${notice.author}">작성자</span>
+<<<<<<< HEAD
                             <span class="notice-date" th:text="${#temporals.format(notice.createdAt, 'yyyy.MM.dd')}">작성일</span>
+=======
+                            <span class="notice-date" th:text="${#temporals.format(notice.createdAt, 'yyyy.MM.dd')}">날짜</span>
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
                             <span class="notice-views" th:text="'조회 ' + ${notice.viewCount}">조회수</span>
                         </div>
                     </div>
@@ -140,7 +173,11 @@
 
         </div>
 
+<<<<<<< HEAD
         <!-- 검색 결과 없음 처리 -->
+=======
+        <!-- 공지사항 없음 -->
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
         <div th:if="${(notices == null or notices.empty) and (importantNotices == null or importantNotices.empty)}" class="empty-board">
             <div class="empty-icon">📢</div>
             <h3>공지사항이 없습니다</h3>
@@ -152,21 +189,39 @@
         <div th:if="${noticePage != null and noticePage.totalPages > 1}" class="pagination">
             <!-- 이전 페이지 버튼 -->
             <a th:if="${noticePage.hasPrevious()}"
+<<<<<<< HEAD
                th:href="@{/notice(page=${noticePage.number - 1}, importance=${param.importance}, keyword=${param.keyword}, sort=${param.sort})}" class="page-btn">이전</a>
+=======
+               th:href="@{/notice(page=${noticePage.number - 1}, importance=${param.importance}, keyword=${param.keyword}, sort=${param.sort})}"
+               class="page-btn">이전</a>
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
 
             <!-- 현재 페이지 주변 5개만 출력 -->
             <span th:each="i : ${#numbers.sequence(0, noticePage.totalPages - 1)}"
                   th:if="${i >= noticePage.number - 2 and i <= noticePage.number + 2}"
                   th:class="${i == noticePage.number} ? 'page-btn active' : 'page-btn'">
+<<<<<<< HEAD
                 <a th:href="@{/notice(page=${i}, importance=${param.importance}, keyword=${param.keyword}, sort=${param.sort})}" th:text="${i + 1}">1</a>
+=======
+                <a th:href="@{/notice(page=${i}, importance=${param.importance}, keyword=${param.keyword}, sort=${param.sort})}"
+                   th:text="${i + 1}">1</a>
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
             </span>
 
             <!-- 다음 페이지 버튼 -->
             <a th:if="${noticePage.hasNext()}"
+<<<<<<< HEAD
                th:href="@{/notice(page=${noticePage.number + 1}, importance=${param.importance}, keyword=${param.keyword}, sort=${param.sort})}" class="page-btn">다음</a>
         </div>
 
         <!-- 공지사항 안내 영역 -->
+=======
+               th:href="@{/notice(page=${noticePage.number + 1}, importance=${param.importance}, keyword=${param.keyword}, sort=${param.sort})}"
+               class="page-btn">다음</a>
+        </div>
+
+        <!-- 안내 -->
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
         <div class="notice-guide">
             <h4>📋 공지사항 안내</h4>
             <ul>

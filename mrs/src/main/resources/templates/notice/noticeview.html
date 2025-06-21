@@ -3,12 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <title>공지사항 상세</title>
+<<<<<<< HEAD
 
   <!-- 메인 및 게시판 전용 CSS 연결 -->
   <link rel="stylesheet" th:href="@{/main.css}">
   <link rel="stylesheet" th:href="@{/board.css}">
 
   <!-- 상세 화면 전용 스타일 추가 -->
+=======
+  <link rel="stylesheet" th:href="@{/main.css}">
+  <link rel="stylesheet" th:href="@{/board.css}">
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
   <style>
     .post-meta {
       display: flex;
@@ -16,15 +21,24 @@
       align-items: center;
       margin-top: 10px;
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
     .meta-left {
       display: flex;
       gap: 12px;
       align-items: center;
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
     .meta-right {
       display: flex;
       gap: 10px;
     }
+<<<<<<< HEAD
     .meta-right form {
       display: inline;
     }
@@ -52,6 +66,20 @@
     </div>
 
     <!-- 상단 메뉴 네비게이션 -->
+=======
+
+    .meta-right form {
+      display: inline;
+    }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container">
+    <div class="logo">
+      <h1><a th:href="@{/}">무비리뷰</a></h1>
+    </div>
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
     <nav class="main-nav">
       <ul>
         <li><a th:href="@{/}">홈</a></li>
@@ -63,6 +91,7 @@
   </div>
 </header>
 
+<<<<<<< HEAD
 <!-- 메인 콘텐츠 영역 -->
 <main class="board-main">
   <div class="container">
@@ -99,16 +128,44 @@
               <a th:href="@{'/notice/edit/' + ${notice.id}}" class="btn btn-primary">수정</a>
 
               <!-- 삭제 버튼 (삭제 확인창 띄움) -->
+=======
+<main class="board-main">
+  <div class="container">
+    <div class="board-content post-detail">
+      <div class="post-header">
+        <div class="post-category">
+          <span th:classappend="${notice.importance == 'IMPORTANT'} ? 'notice-badge' : 'notice-badge normal'"
+                th:text="${notice.importance == 'IMPORTANT'} ? '중요' : '공지'">공지</span>
+        </div>
+        <h1 class="post-title" th:text="${notice.title}">공지 제목</h1>
+
+        <!-- 작성자/작성일/조회수 + 버튼들 -->
+        <div class="post-meta">
+          <div class="meta-left">
+            <span class="author-name" th:text="${notice.author}">관리자</span>
+            <span class="post-date" th:text="${#temporals.format(notice.createdAt, 'yyyy.MM.dd HH:mm')}">작성일</span>
+            <span class="post-views" th:text="'조회수 ' + ${notice.viewCount}">조회수 0</span>
+          </div>
+          <div class="meta-right">
+            <a th:href="@{/notice}" class="btn btn-secondary">목록</a>
+
+            <div th:if="${sessionUser != null and sessionUser.userRole.name() == 'ADMIN'}">
+              <a th:href="@{'/notice/edit/' + ${notice.id}}" class="btn btn-primary">수정</a>
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
               <form th:action="@{'/notice/delete/' + ${notice.id}}" method="post"
                     onsubmit="return confirm('정말 삭제하시겠습니까?');">
                 <button type="submit" class="btn btn-outline">삭제</button>
               </form>
             </div>
+<<<<<<< HEAD
 
+=======
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
           </div>
         </div>
       </div>
 
+<<<<<<< HEAD
       <!-- 게시글 본문 영역 -->
       <div class="post-content">
 
@@ -124,16 +181,29 @@
 
       </div>
 
+=======
+      <div class="post-content">
+        <div class="content-body" th:text="${notice.content}">
+          공지 내용입니다.
+        </div>
+      </div>
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
     </div>
   </div>
 </main>
 
+<<<<<<< HEAD
 <!-- 푸터 -->
+=======
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
 <footer class="site-footer">
   <div class="container">
     <p>&copy; 2025 무비리뷰. All rights reserved.</p>
   </div>
 </footer>
+<<<<<<< HEAD
 
+=======
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
 </body>
 </html>

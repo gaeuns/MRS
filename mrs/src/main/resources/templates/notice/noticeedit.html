@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>공지사항 수정</title>
   <link rel="stylesheet" th:href="@{/board.css}">
+<<<<<<< HEAD
   <style>
     .post-image-preview {
       margin-top: 10px;
@@ -15,6 +16,8 @@
       margin-top: 5px;
     }
   </style>
+=======
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
 </head>
 <body class="board-main">
 
@@ -26,6 +29,7 @@
 </div>
 
 <div class="board-content">
+<<<<<<< HEAD
   <form class="write-form"
         th:action="@{'/notice/edit/' + ${notice.id}}"
         method="post"
@@ -33,18 +37,28 @@
         th:object="${notice}">
 
     <!-- 제목 -->
+=======
+  <form class="write-form" th:action="@{'/notice/edit/' + ${notice.id}}" method="post" th:object="${notice}">
+
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
     <div class="form-group">
       <label for="title" class="form-label">제목 <span class="required">*</span></label>
       <input type="text" id="title" name="title" th:field="*{title}" class="form-input" required>
     </div>
 
+<<<<<<< HEAD
     <!-- 내용 -->
+=======
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
     <div class="form-group">
       <label for="content" class="form-label">내용 <span class="required">*</span></label>
       <textarea id="content" name="content" th:field="*{content}" class="form-textarea" required></textarea>
     </div>
 
+<<<<<<< HEAD
     <!-- 중요도 -->
+=======
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
     <div class="form-group">
       <label class="form-label">중요도</label>
       <div class="radio-group">
@@ -59,6 +73,7 @@
       </div>
     </div>
 
+<<<<<<< HEAD
     <!-- 이미지 첨부 -->
     <div class="form-group">
       <label class="form-label">첨부 이미지</label>
@@ -71,6 +86,8 @@
     </div>
 
     <!-- 버튼 -->
+=======
+>>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
     <div class="form-actions">
       <button type="submit" class="btn btn-primary">수정 완료</button>
       <a th:href="@{/notice}" class="btn btn-secondary">취소</a>
