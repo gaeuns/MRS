@@ -172,6 +172,9 @@ public class ReviewController {
         List<ReviewCommentDTO> comments = reviewCommentService.getComments(id);
         model.addAttribute("comments", comments);
 
+        Movie movie = review.getMovie();
+        model.addAttribute("movie", movie);
+
         if (session.getAttribute("user") != null) {
             UserDTO userDTO = (UserDTO) session.getAttribute("user");
 

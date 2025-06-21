@@ -49,12 +49,6 @@
             <div class="movie-poster-large">
                 <img th:src="@{${movie.posterUrl} + '?v=' + ${#dates.createNow().getTime()}}"
                      th:alt="${movie.title}">
-                <div class="poster-actions">
-                    <button th:if="${session.user != null}" class="btn btn-wishlist"
-                            th:classappend="${isInWishlist} ? 'active' : ''">
-                        <span th:text="${isInWishlist} ? '❤️ 찜 해제' : '🤍 찜하기'">🤍 찜하기</span>
-                    </button>
-                </div>
             </div>
 
             <div class="movie-info-detail">
@@ -120,6 +114,11 @@
                             <span>🎬</span> 예고편 보기
                         </a>
                     </button>
+                    <form th:if="${session.user != null and session.user.userId.equals('admin')}"
+                          th:action="@{/movie/delete/{id}(id=${movie.id})}" method="post">
+                        <button type="submit" class="btn btn-admin">영화 삭제</button>
+                    </form>
+
                 </div>
             </div>
         </div>
@@ -155,7 +154,8 @@
                         <div class="review-header">
                             <div class="reviewer-info">
                                 <div class="reviewer-details">
-                                    <span class="reviewer-name" th:text="${review.user.userName}">리뷰어</span>
+                                    <span th:if="${review.user.withdrawal}" th:text="'탈퇴한 회원'"></span>
+                                    <span th:if="${not review.user.withdrawal}" th:text="${review.user.userName}">리뷰어</span>
                                     <div class="review-meta">
                                         <div class="review-rating">
                                                 <span th:each="i : ${#numbers.sequence(1, 5)}"

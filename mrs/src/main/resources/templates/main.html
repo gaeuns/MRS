@@ -60,14 +60,14 @@
         <div class="movie-grid">
             <div th:each="movie : ${movie}" class="movie-card">
                 <a th:href="@{/movie-page/{id}(id=${movie.id})}" class="movie-link">
-                <div class="movie-poster">
-                    <img th:src="${movie.posterUrl}" th:alt="${movie.title}">
-                    <div class="movie-rating" th:text="${movie.rating}">9.5</div>
-                </div>
-                <div class="movie-info">
-                    <h3 class="movie-title" th:text="${movie.title}">영화 제목</h3>
-                    <p class="movie-genre" th:text="${movie.category}">장르</p>
-                </div>
+                    <div class="movie-poster">
+                        <img th:src="${movie.posterUrl}" th:alt="${movie.title}">
+                        <div class="movie-rating" th:text="${movie.rating}">9.5</div>
+                    </div>
+                    <div class="movie-info">
+                        <h3 class="movie-title" th:text="${movie.title}">영화 제목</h3>
+                        <p class="movie-genre" th:text="${movie.category}">장르</p>
+                    </div>
                 </a>
             </div>
         </div>
@@ -78,29 +78,35 @@
     <div class="container">
         <h2 class="section-title">최신 리뷰</h2>
         <div class="reviews-list">
-            <div th:each="review : ${review}" class="review-card">
+            <div th:each="review : ${review}" class="review-card" th:data-review-id="${review.id}">
+
                 <a th:href="@{/review-page/{id}(id=${review.id})}">
-                <div class="review-header">
-                    <div class="review-movie">
-                        <img th:src="${review.movie.posterUrl}" th:alt="${review.movie.title}" class="review-movie-poster">
-                        <h3 th:text="${review.movie.title}">영화 제목</h3>
+                    <div class="review-header">
+                        <div class="review-movie">
+                            <img th:src="${review.movie.posterUrl}" th:alt="${review.movie.title}" class="review-movie-poster">
+                            <h3 th:text="${review.movie.title}">영화 제목</h3>
+                        </div>
+                        <div class="review-rating" th:text="${review.rating}">8.5</div>
                     </div>
-                    <div class="review-rating" th:text="${review.rating}">8.5</div>
-                </div>
-                <div class="review-content">
-                    <h4 th:text="${review.title}">리뷰 제목</h4>-
-                    <p th:text="${review.description}">리뷰 내용...</p>
-                </div>
-                <div class="review-footer">
-                    <div class="review-author">
-                        <span th:text="${review.user.userName}">작성자</span>
+
+                    <!-- 리뷰 내용 (스포일러 블러 적용) -->
+                    <div class="review-content" th:class="${review.hasSpoiler} ? 'review-content-main spoiler-hidden-main' : 'review-content'">
+                        <h4 th:text="${review.title}">리뷰 제목</h4>
+                        <p th:text="${review.description}">리뷰 내용...</p>
+
                     </div>
-                    <div class="review-date" th:text="${review.createdAt}">2023-06-04</div>
-                    <div class="review-actions">
-                        <span class="likes" th:text="${review.likeCount}">15</span>
-                        <span class="comments" th:text="${review.commentCount}">3</span>
+
+                    <div class="review-footer">
+                        <div class="review-author">
+                            <span th:if="${review.user.withdrawal}" th:text="'탈퇴한 회원'"></span>
+                            <span th:if="${not review.user.withdrawal}" th:text="${review.user.userName}"></span>
+                        </div>
+                        <div class="review-date" th:text="${review.createdAt}">2023-06-04</div>
+                        <div class="review-actions">
+                            <span class="likes" th:text="${review.likeCount}">15</span>
+                            <span class="comments" th:text="${review.commentCount}">3</span>
+                        </div>
                     </div>
-                </div>
                 </a>
             </div>
         </div>
@@ -154,6 +160,5 @@
         </div>
     </div>
 </footer>
-
 </body>
 </html>

@@ -129,4 +129,13 @@ public class MovieController {
         return "movie-page";
     }
 
+    //영화 삭제
+    @PostMapping("/movie/delete/{id}")
+    public String movieDelete(@PathVariable Long id) {
+        movieRepository.deleteById(id);
+
+        return "redirect:/movies";
+    }
+
+
 }

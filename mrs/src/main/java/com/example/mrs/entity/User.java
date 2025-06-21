@@ -20,4 +20,6 @@ public class User {
 
     @Transient
     private String confirmPassword;
+
+    private boolean withdrawal;
 }

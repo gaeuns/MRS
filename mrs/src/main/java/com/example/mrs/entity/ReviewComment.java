@@ -24,4 +24,6 @@ public class ReviewComment {
     private String content;
 
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    private boolean withdrawal;
 }

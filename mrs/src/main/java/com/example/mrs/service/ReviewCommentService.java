@@ -43,6 +43,7 @@ public class ReviewCommentService {
                     dto.setCreatedAt(comment.getCreatedAt());
                     dto.setAuthorId(comment.getUser().getId());
                     dto.setAuthorUserId(comment.getUser().getUserId());
+                    dto.setWithdrawal(comment.isWithdrawal());
                     return dto;
                 })
                 .toList();

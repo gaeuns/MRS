@@ -70,7 +70,7 @@ public class UserController {
     public String postMain(@ModelAttribute("userInfo") User user, BindingResult result, HttpSession session, Model model) {
         var dbUser = userRepository.findByUserId(user.getUserId()).orElse(null);
 
-        if (dbUser == null) {
+        if (dbUser == null || dbUser.isWithdrawal()) {
             result.rejectValue("userId", "error.userId", "존재하지 않는 ID입니당당당.");
             return "login";
         }
@@ -100,7 +100,5 @@ public class UserController {
         }
         return "redirect:/";
     }
-
-    //마이페이지
 
 }

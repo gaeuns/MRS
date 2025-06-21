@@ -1,9 +1,12 @@
 package com.example.mrs.controller;
 
+import com.example.mrs.dto.ReviewCommentDTO;
 import com.example.mrs.dto.UserDTO;
 import com.example.mrs.dto.UserUpdateDTO;
 import com.example.mrs.entity.Review;
+import com.example.mrs.entity.ReviewComment;
 import com.example.mrs.entity.User;
+import com.example.mrs.repository.ReviewCommentRepository;
 import com.example.mrs.repository.ReviewRepository;
 import com.example.mrs.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
@@ -22,6 +25,7 @@ public class MyPageController {
 
     private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
+    private final ReviewCommentRepository reviewCommentRepository;
 
     //마이페이지
     @GetMapping("/mypage")
@@ -62,9 +66,6 @@ public class MyPageController {
     @PostMapping("/mypage/edit")
     public String myPageSubmit(@ModelAttribute UserUpdateDTO userUpdateDTO, HttpSession session, Model model) {
         UserDTO userDTO = (UserDTO) session.getAttribute("user");
-        if (userDTO == null) {
-            return "redirect:/login";
-        }
 
         User user = userRepository.findByUserId(userDTO.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
@@ -109,6 +110,27 @@ public class MyPageController {
         session.setAttribute("user", userDTO);
 
         return "redirect:/mypage";
+    }
+
+    //회원 탈퇴
+    @PostMapping("/user/delete")
+    public String userDelete(HttpSession session, Model model) {
+        UserDTO userDTO = (UserDTO) session.getAttribute("user");
+        User user = userRepository.findByUserId(userDTO.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+
+        //User 테이블 탈퇴 표시
+        user.setWithdrawal(true);
+        userRepository.save(user);
+
+        //ReviewComment 테이블에서도 해당 유저가 작성한 댓글 전부 수정
+        List<ReviewComment> comments = reviewCommentRepository.findByUser_UserId(user.getUserId());
+        for (ReviewComment comment : comments) {
+            comment.setWithdrawal(true);
+        }
+        reviewCommentRepository.saveAll(comments);
+
+        return "redirect:/";
     }
 
 }
