@@ -33,13 +33,9 @@
                     <span th:text="${error}">회원가입 중 오류가 발생했습니다.</span>
                 </div>
 
-                <form th:action="@{/adduser}"
-                      th:object="${userInfo}"
-                      method="post"
-                      class="auth-form">
-
+                <form th:action="@{/adduser}" th:object="${userInfo}" method="post" class="auth-form">
                     <!-- 회원가입 성공 모달 -->
-                    <div th:if="${success}" id="successModal" class="modal-overlay">
+                    <div th:if="${success==1}" id="successModal" class="modal-overlay">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h3>🎉 회원가입 완료!</h3>
@@ -107,7 +103,7 @@
                         <div th:if="${#fields.hasErrors('userPassword')}" class="field-error">
                             <span th:errors="*{userPassword}">비밀번호 오류</span>
                         </div>
-                        <small class="form-help">최소 8자, 대소문자, 숫자, 특수문자 포함</small>
+                        <small class="form-help">비밀번호를 입력하세요</small>
                     </div>
 
                     <div class="form-group">

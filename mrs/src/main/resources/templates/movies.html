@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>영화 - 무비리뷰</title>
+    <link rel="stylesheet" th:href="@{/main.css}">
+    <link rel="stylesheet" th:href="@{/movies.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="site-header">
+    <div class="container">
+        <div class="logo">
+            <h1><a th:href="@{/}">무비리뷰</a></h1>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a th:href="@{/}">홈</a></li>
+                <li><a th:href="@{/movies}">영화</a></li>
+                <li><a th:href="@{/community}">커뮤니티</a></li>
+                <li><a th:href="@{/notice}">공지사항</a></li>
+            </ul>
+        </nav>
+        <div class="user-actions">
+            <div class="user-profile" th:if="${session.user != null}">
+                <span th:text="${session.user.userName}">사용자</span>
+                <a th:href="@{/mypage}" class="profile-link">마이페이지</a>
+                <a th:href="@{/logout}" class="logout-link">로그아웃</a>
+            </div>
+            <div class="auth-buttons" th:if="${session.user == null}">
+                <a th:href="@{/login}" class="btn btn-login">로그인</a>
+                <a th:href="@{/signup}" class="btn btn-register">회원가입</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="movies-main">
+    <div class="container">
+        <!-- 페이지 헤더 -->
+        <div class="page-header">
+            <h1>영화</h1>
+            <p>다양한 영화들을 둘러보고 리뷰를 확인해보세요!</p>
+        </div>
+
+        <!-- 필터 및 검색 -->
+        <div class="movies-filter">
+            <div class="filter-tabs">
+                <a th:href="@{/movies}" class="filter-tab"
+                   th:classappend="${category == null} ? ' active' : ''">전체</a>
+                <a th:href="@{/movies(category=${'action'})}" class="filter-tab"
+                   th:classappend="${category == 'action'} ? ' active' : ''">액션</a>
+                <a th:href="@{/movies(category=${'drama'})}" class="filter-tab"
+                   th:classappend="${category == 'drama'} ? ' active' : ''">드라마</a>
+                <a th:href="@{/movies(category=${'comedy'})}" class="filter-tab"
+                   th:classappend="${category == 'comedy'} ? ' active' : ''">코미디</a>
+                <a th:href="@{/movies(category=${'thriller'})}" class="filter-tab"
+                   th:classappend="${category == 'thriller'} ? ' active' : ''">스릴러</a>
+                <a th:href="@{/movies(category=${'romance'})}" class="filter-tab"
+                   th:classappend="${category == 'romance'} ? ' active' : ''">로맨스</a>
+                <a th:href="@{/movies(category=${'horror'})}" class="filter-tab"
+                   th:classappend="${category == 'horror'} ? ' active' : ''">공포</a>
+                <a th:href="@{/movies(category=${'sf'})}" class="filter-tab"
+                   th:classappend="${category == 'sf'} ? ' active' : ''">SF</a>
+                <a th:href="@{/movies(category=${'fantasy'})}" class="filter-tab"
+                   th:classappend="${category == 'fantasy'} ? ' active' : ''">판타지</a>
+                <a th:href="@{/movies(category=${'animation'})}" class="filter-tab"
+                   th:classappend="${category == 'animation'} ? ' active' : ''">애니메이션</a>
+                <a th:href="@{/movies(category=${'documentary'})}" class="filter-tab"
+                   th:classappend="${category == 'documentary'} ? ' active' : ''">다큐멘터리</a>
+            </div>
+
+            <div class="search-sort">
+                <form th:action="@{/movies}" method="get" class="search-form">
+                    <input type="hidden" name="category" th:value="${param.category}">
+                    <input type="hidden" name="sort" th:value="${param.sort}">
+                    <input type="text" name="keyword" th:value="${param.keyword}"
+                           placeholder="영화 제목을 검색하세요" class="search-input">
+                    <button type="submit" class="btn btn-primary">검색</button>
+                </form>
+
+                <div class="admin-actions" th:if="${session.user != null and session.user.userId == 'admin'}">
+                    <a th:href="@{/movie-register}" class="btn btn-admin">
+                        <span>+</span> 영화 등록
+                    </a>
+                </div>
+
+                <div class="sort-options">
+                    <select onchange="location.href=this.value" class="sort-select">
+                        <option value="" th:selected="${param.sort == null}">정렬 기준</option>
+                        <option th:value="@{/movies(sort='latest', category=${param.category}, keyword=${param.keyword})}"
+                                th:selected="${param.sort == 'latest'}">최신순</option>
+                        <option th:value="@{/movies(sort='rating', category=${param.category}, keyword=${param.keyword})}"
+                                th:selected="${param.sort == 'rating'}">평점순</option>
+                        <option th:value="@{/movies(sort='popular', category=${param.category}, keyword=${param.keyword})}"
+                                th:selected="${param.sort == 'popular'}">인기순</option>
+                        <option th:value="@{/movies(sort='title', category=${param.category}, keyword=${param.keyword})}"
+                                th:selected="${param.sort == 'title'}">제목순</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- 영화 목록 -->
+        <div class="movies-grid" th:if="${movies != null}">
+            <div th:each="movie : ${movies}" class="movie-card">
+                <a th:href="@{/movie-page/{id}(id=${movie.id})}" class="movie-link">
+                    <div class="movie-poster">
+                        <img th:src="@{${movie.posterUrl} + '?v=' + ${#dates.createNow().getTime()}}"
+                             th:alt="${movie.title}" loading="lazy">
+                        <div class="movie-overlay">
+                            <div class="movie-year" th:text="${movie.releaseDate}">2023</div>
+                            <div class="movie-rating">
+                                <span class="rating-star">★</span>
+                                <span th:text="${movie.averageRating != null ? #numbers.formatDecimal(movie.averageRating, 1, 1) : 'N/A'}">8.5</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="movie-info">
+                        <h3 class="movie-title" th:text="${movie.title}">영화 제목</h3>
+                        <p class="movie-genre" th:text="${movie.category}">액션, 드라마</p>
+                        <div class="movie-stats">
+                            <span class="review-count" th:text="'리뷰 ' + ${movie.reviewCount} + '개'">리뷰 24개</span>
+                            <span class="release-date" th:text="${movie.releaseDate}">2023.05.15</span>
+                        </div>
+
+                        <!-- 리뷰 작성 버튼 추가 -->
+                        <div class="movie-actions">
+                            <a th:if="${session.user != null and !movie.hasMyReview}"
+                               th:href="@{/movies/{id}/review(id=${movie.id})}"
+                               class="btn btn-review">리뷰 작성</a>
+                            <a th:if="${session.user == null}"
+                               th:href="@{/login}"
+                               class="btn btn-review">리뷰 작성</a>
+                            <a th:if="${session.user != null and movie.hasMyReview}"
+                               th:href="@{/movies/{id}/review(id=${movie.id})}"
+                               class="btn btn-review">리뷰 수정</a>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- 영화가 없을 때 -->
+        <div th:if="${movies == null}" class="empty-movies">
+            <div class="empty-icon">🎬</div>
+            <h3>영화를 찾을 수 없습니다</h3>
+            <p th:if="${param.keyword != null}">검색 결과가 없습니다. 다른 검색어로 시도해보세요.</p>
+            <p th:if="${param.keyword == null}">아직 등록된 영화가 없습니다.</p>
+        </div>
+
+        <!-- 페이지네이션 -->
+        <div th:if="${moviePage != null and moviePage.totalPages > 1}" class="pagination">
+            <a th:if="${moviePage.hasPrevious()}"
+               th:href="@{/movies(page=${moviePage.number - 1}, category=${param.category}, keyword=${param.keyword}, sort=${param.sort})}"
+               class="page-btn">이전</a>
+
+            <span th:each="i : ${#numbers.sequence(0, moviePage.totalPages - 1)}"
+                  th:if="${i >= moviePage.number - 2 and i <= moviePage.number + 2}"
+                  th:class="${i == moviePage.number} ? 'page-btn active' : 'page-btn'">
+                    <a th:href="@{/movies(page=${i}, category=${param.category}, keyword=${param.keyword}, sort=${param.sort})}"
+                       th:text="${i + 1}">1</a>
+                </span>
+
+            <a th:if="${moviePage.hasNext()}"
+               th:href="@{/movies(page=${moviePage.number + 1}, category=${param.category}, keyword=${param.keyword}, sort=${param.sort})}"
+               class="page-btn">다음</a>
+        </div>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <div class="container">
+        <p>&copy; 2025 Spring Boot Project</p>
+    </div>
+</footer>
+</body>
+</html>

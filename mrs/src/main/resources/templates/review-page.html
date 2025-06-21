@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${review.movie.title} + ' 리뷰 - ' + ${review.user.userName} + ' - 무비리뷰'">영화 리뷰 - 무비리뷰</title>
+  <link rel="stylesheet" th:href="@{/main.css}">
+  <link rel="stylesheet" th:href="@{/movies.css}">
+  <link rel="stylesheet" th:href="@{/board.css}">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="site-header">
+  <div class="container">
+    <div class="logo">
+      <h1><a th:href="@{/}">무비리뷰</a></h1>
+    </div>
+    <nav class="main-nav">
+      <ul>
+        <li><a th:href="@{/}">홈</a></li>
+        <li><a th:href="@{/movies}">영화</a></li>
+        <li><a th:href="@{/community}">커뮤니티</a></li>
+        <li><a th:href="@{/notice}">공지사항</a></li>
+      </ul>
+    </nav>
+    <div class="user-actions">
+      <div class="user-profile" th:if="${session.user != null}">
+        <span th:text="${session.user.userName}">사용자</span>
+        <a th:href="@{/mypage}" class="profile-link">마이페이지</a>
+        <a th:href="@{/logout}" class="logout-link">로그아웃</a>
+      </div>
+      <div class="auth-buttons" th:if="${session.user == null}">
+        <a th:href="@{/login}" class="btn btn-login">로그인</a>
+        <a th:href="@{/signup}" class="btn btn-register">회원가입</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="review-detail-main">
+  <div class="container">
+    <!-- 뒤로가기 -->
+    <div class="breadcrumb">
+      <a th:href="@{/}">홈</a> >
+      <a th:href="@{/movies}">영화</a> >
+      <a th:href="@{/movie-page/{id}(id=${movie.id})}" th:text="${review.movie.title}">영화 제목</a> >
+      <span>리뷰</span>
+    </div>
+
+    <!-- 리뷰 상세 내용 -->
+    <div class="review-detail-container">
+      <!-- 영화 정보 요약 -->
+      <div class="movie-summary-card">
+        <div class="movie-summary-poster">
+          <img th:src="${review.movie.posterUrl != null ? review.movie.posterUrl : '/placeholder.svg?height=300&width=200'}"
+               th:alt="${review.movie.title}">
+        </div>
+        <div class="movie-summary-info">
+          <h2 class="movie-title">
+            <a th:href="@{/movies/{id}(id=${review.movie.id})}" th:text="${review.movie.title}">영화 제목</a>
+          </h2>
+          <p class="movie-meta">
+            <span th:text="${review.movie.releaseDate}">2023</span> |
+            <span th:text="${review.movie.category}">액션, 드라마</span> |
+            <span th:text="${review.movie.runtime} + '분'">120분</span>
+          </p>
+          <div class="movie-rating">
+            <span class="rating-star">★</span>
+            <span class="rating-score" th:text="${review.movie.averageRating != null ? #numbers.formatDecimal(review.movie.averageRating, 1, 1) : 'N/A'}">8.5</span>
+            <span class="rating-count" th:text="'(' + ${review.movie.reviewCount} + '명)'">( 124명 )</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 리뷰 상세 -->
+      <div class="review-detail-content">
+        <!-- 리뷰 헤더 -->
+        <div class="review-header">
+          <div class="reviewer-info">
+            <div class="reviewer-details">
+              <h3 class="reviewer-name" th:if="${not review.user.withdrawal}" th:text="${review.user.userName}">리뷰어</h3>
+              <h3 class="reviewer-name" th:if="${review.user.withdrawal}" th:text="'탈퇴한 회원'">리뷰어</h3>
+              <div class="review-meta">
+                <div class="review-rating">
+                                        <span th:each="i : ${#numbers.sequence(1, 5)}"
+                                              th:class="${i <= review.rating} ? 'star filled' : 'star'">★</span>
+                  <span class="rating-text" th:text="${review.rating} + '점'">5점</span>
+                </div>
+                <span class="review-date" th:text="${review.createdAt}">2023년 06월 01일 14:30</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 리뷰 액션 버튼 -->
+          <div class="review-actions">
+            <div th:if="${session.user != null and (session.user.userId.equals(review.user.userId) or session.user.userId.equals('admin'))}"
+                 class="author-actions">
+              <a th:href="@{/movies/{id}/review(id=${review.movie.id})}"
+                 class="btn btn-edit">
+                <span>✏️</span> 수정
+              </a>
+              <a th:href="@{/movies/{movieId}/review/{reviewId}/delete(movieId=${review.movie.id}, reviewId=${review.id})}"
+                 class="btn btn-delete">
+              <span>🗑️</span> 삭제
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 스포일러 경고 -->
+        <div th:if="${review.hasSpoiler}" class="spoiler-warning">
+          <div class="spoiler-icon">⚠️</div>
+          <div class="spoiler-text">
+            <strong>스포일러 주의!</strong>
+            <p>이 리뷰에는 영화의 스포일러가 포함되어 있습니다.</p>
+          </div>
+          <button class="btn btn-spoiler-toggle" onclick="toggleSpoiler()">
+            스포일러 보기
+          </button>
+        </div>
+
+        <!-- 리뷰 내용 -->
+        <div class="review-content" th:class="${review.hasSpoiler} ? 'review-content spoiler-hidden' : 'review-content'">
+          <div class="content-body">
+            <p th:text="${review.description}">리뷰 내용이 여기에 표시됩니다. 영화에 대한 상세한 감상과 평가가 포함됩니다.</p>
+          </div>
+        </div>
+
+          <div class="review-stats">
+            <div class="helpful-section" th:if="${session.user != null}">
+              <!-- 로그인 유저인 경우 -->
+              <!-- 도움됨 -->
+              <form th:action="@{'/review/' + ${review.id} + '/like'}" method="post" style="display: inline;">
+                <button type="submit" class="btn-helpful"
+                        th:classappend="${userReview != null and userReview.like} ? 'active' : ''">
+                  👍 <span th:text="${review.likeCount}">0</span>
+                </button>
+              </form>
+
+              <!-- 도움안됨 -->
+              <form th:action="@{'/review/' + ${review.id} + '/dislike'}" method="post" style="display: inline;">
+                <button type="submit" class="btn-unhelpful"
+                        th:classappend="${userReview != null and userReview.dislike} ? 'active' : ''">
+                  👎 <span th:text="${review.dislikeCount}">0</span>
+                </button>
+              </form>
+            </div>
+            <div th:if="${session.user == null}" class="login-notice">
+              <a th:href="@{/login}">로그인</a>하시면 리뷰 평가에 참여할 수 있습니다.
+            </div>
+
+          <div class="review-info">
+            <span class="view-count">조회 <span th:text="${review.viewCount}">45</span>회</span>
+            <span class="comment-count">댓글 <span th:text="${review.commentCount}">8</span>개</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 댓글 섹션 -->
+      <div class="comments-section">
+        <div class="comments-header">
+          <h3>댓글 <span th:text="${review.commentCount}">8</span>개</h3>
+        </div>
+
+        <div th:if="${session.user != null}" class="comment-form">
+          <form th:action="@{/reviews/{id}/comments(id=${review.id})}" method="post">
+            <div class="comment-input-area">
+              <textarea name="content" placeholder="댓글을 입력하세요..." required></textarea>
+            </div>
+            <div class="comment-actions">
+              <button type="submit" class="btn btn-primary">댓글 작성</button>
+            </div>
+          </form>
+        </div>
+
+        <div th:if="${session.user == null}" class="login-notice">
+          <p><a th:href="@{/login}">로그인</a>하시면 댓글을 작성할 수 있습니다.</p>
+        </div>
+
+        <!-- 댓글 목록 -->
+        <div class="comments-list">
+          <div th:each="comment : ${comments}" class="comment-item">
+
+            <!-- 댓글 헤더 -->
+            <div class="comment-header">
+              <div class="commenter-info">
+                <div class="commenter-details">
+                  <span class="commenter-name" th:if="${comment.withdrawal != null and comment.withdrawal}" th:text="'탈퇴한 회원'"></span>
+                  <span class="commenter-name" th:if="${comment.withdrawal != null and not comment.withdrawal}" th:text="${comment.userName}">댓글 작성자</span>
+                  <span class="comment-date" th:text="${#temporals.format(comment.createdAt, 'yyyy.MM.dd HH:mm')}">날짜</span>
+                </div>
+              </div>
+
+              <div th:if="${session.user != null and (session.user.userId.equals(comment.authorUserId) or session.user.userId.equals('admin'))}"
+                   class="comment-actions">
+              <button type="button" onclick="editComment(this)">수정</button>
+
+                <!-- 삭제 버튼은 form으로 감싸고 JS로 submit -->
+                <form th:action="@{/review/{reviewId}/comment/{commentId}/delete(reviewId=${review.id}, commentId=${comment.id})}" method="post" style="display:inline;">
+                  <button type="button" onclick="deleteComment(this)">삭제</button>
+                </form>
+              </div>
+            </div>
+
+            <!-- 댓글 본문 -->
+            <div class="comment-content">
+              <p th:text="${comment.content}">댓글 내용</p>
+            </div>
+
+            <!-- ✏️ 수정 폼 (기본 숨김) -->
+            <form th:action="@{/reviews/{reviewId}/comments/{commentId}/edit(reviewId=${review.id}, commentId=${comment.id})}"
+                  method="post" class="edit-form" style="display:none; margin-top: 10px;">
+              <input type="text" name="content" th:value="${comment.content}" required style="width: 80%;" />
+              <button type="submit" class="btn btn-primary">수정 완료</button>
+            </form>
+
+          </div>
+        </div>
+
+        <div th:if="${comments == null}" class="empty-comments">
+          <div class="empty-icon">💬</div>
+          <h4>아직 댓글이 없습니다</h4>
+          <p>이 리뷰에 대한 첫 번째 댓글을 작성해보세요!</p>
+        </div>
+
+
+        <div th:if="${commentPage != null and commentPage.totalPages > 1}" class="comment-pagination">
+          <a th:if="${commentPage.hasPrevious()}"
+             th:href="@{/reviews/{id}(id=${review.id}, commentPage=${commentPage.number - 1})}"
+             class="page-btn">이전</a>
+
+          <span th:each="i : ${#numbers.sequence(0, commentPage.totalPages - 1)}"
+                th:if="${i >= commentPage.number - 2 and i <= commentPage.number + 2}"
+                th:class="${i == commentPage.number} ? 'page-btn active' : 'page-btn'">
+                            <a th:href="@{/reviews/{id}(id=${review.id}, commentPage=${i})}" th:text="${i + 1}">1</a>
+                        </span>
+
+          <a th:if="${commentPage.hasNext()}"
+             th:href="@{/reviews/{id}(id=${review.id}, commentPage=${commentPage.number + 1})}"
+             class="page-btn">다음</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; 2023 무비리뷰. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+  // 스포일러 토글
+  function toggleSpoiler() {
+    const content = document.querySelector('.review-content');
+    const button = document.querySelector('.btn-spoiler-toggle');
+
+    if (content.classList.contains('spoiler-hidden')) {
+      content.classList.remove('spoiler-hidden');
+      button.textContent = '스포일러 숨기기';
+    } else {
+      content.classList.add('spoiler-hidden');
+      button.textContent = '스포일러 보기';
+    }
+  }
+
+  // 도움됨/도움안됨 토글
+  function toggleHelpful() {
+    // AJAX 요청으로 서버에 전송
+    console.log('도움됨 토글');
+  }
+
+  function toggleUnhelpful() {
+    // AJAX 요청으로 서버에 전송
+    console.log('도움안됨 토글');
+  }
+
+  // 리뷰 삭제
+  function deleteReview() {
+    if (confirm('정말로 이 리뷰를 삭제하시겠습니까?')) {
+      // 삭제 요청 (AJAX 또는 form 제출 가능)
+      console.log('리뷰 삭제');
+    }
+  }
+  // 댓글 수정 토글
+  function editComment(button) {
+    const commentItem = button.closest('.comment-item');
+    const editForm = commentItem.querySelector('.edit-form');
+    if (editForm.style.display === 'none' || editForm.style.display === '') {
+      editForm.style.display = 'block';
+    } else {
+      editForm.style.display = 'none';
+    }
+  }
+
+  // 댓글 삭제 확인 후 form 제출
+  function deleteComment(button) {
+    if (confirm('댓글을 삭제하시겠습니까?')) {
+      const form = button.closest('form');
+      form.submit();
+    }
+  }
+
+</script>
+</body>
+</html>

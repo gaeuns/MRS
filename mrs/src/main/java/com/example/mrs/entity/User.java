@@ -26,4 +26,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole userRole = UserRole.USER;
+
+    private boolean withdrawal;
 }

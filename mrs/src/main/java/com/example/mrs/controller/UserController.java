@@ -1,7 +1,11 @@
 package com.example.mrs.controller;
 
+import com.example.mrs.entity.Movie;
+import com.example.mrs.entity.Review;
 import com.example.mrs.entity.User;
 import com.example.mrs.entity.UserRole;
+import com.example.mrs.repository.MovieRepository;
+import com.example.mrs.repository.ReviewRepository;
 import com.example.mrs.repository.UserRepository;
 import com.example.mrs.dto.UserDTO;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,12 +18,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.List;
 import java.util.Objects;
 
 @Controller
 @RequiredArgsConstructor
 public class UserController {
     private final UserRepository userRepository;
+    private final MovieRepository movieRepository;
+    private final ReviewRepository reviewRepository;
 
     // 회원가입
     @GetMapping("/signup")
@@ -52,16 +59,22 @@ public class UserController {
 
     // 로그인
     @GetMapping("/login")
-    public String login(Model model) {
+    public String login(HttpServletRequest request, HttpSession session, Model model) {
+        String referer = request.getHeader("Referer");
+        if (referer != null && !referer.contains("/login")) {
+            session.setAttribute("prevPage", referer);
+        }
+
         model.addAttribute("userInfo", new User());
+
         return "login";
     }
 
     @PostMapping("/login")
-    public String postMain(@ModelAttribute("userInfo") User user, BindingResult result, HttpSession session) {
+    public String postMain(@ModelAttribute("userInfo") User user, BindingResult result, HttpSession session, Model model) {
         var dbUser = userRepository.findByUserId(user.getUserId()).orElse(null);
 
-        if (dbUser == null) {
+        if (dbUser == null || dbUser.isWithdrawal()) {
             result.rejectValue("userId", "error.userId", "존재하지 않는 ID입니당당당.");
             return "login";
         }
@@ -73,7 +86,15 @@ public class UserController {
 
         //  로그인 시 userRole 포함된 DTO로 세션 저장
         session.setAttribute("user", UserDTO.fromEntity(dbUser));
-        return "main";
+
+        List<Movie> movies = movieRepository.findAll();
+        model.addAttribute("movie", movies);
+
+        List<Review> reviews = reviewRepository.findAll();
+        model.addAttribute("review", reviews);
+
+        String redirectUrl = (String) session.getAttribute("prevPage");
+        return "redirect:" + (redirectUrl != null ? redirectUrl : "/");
     }
 
     // 로그아웃
@@ -83,6 +104,7 @@ public class UserController {
         if (session != null) {
             session.invalidate();
         }
-        return "main";
+        return "redirect:/";
     }
+
 }

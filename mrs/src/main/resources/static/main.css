@@ -9,7 +9,7 @@
     --border-color: #ddd;
     --card-bg: #fff;
     --hover-color: #ff3d47;
-    --rating-color: #ffc107;
+    --rating-color: #ffeb93;
     --footer-bg: #221f1f;
     --header-height: 70px;
 }
@@ -717,4 +717,106 @@ img {
     .footer-links {
         grid-template-columns: 1fr;
     }
+}
+
+/* 메인 페이지 스포일러 관련 스타일 */
+.spoiler-warning-main {
+    background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+    border: 2px solid #f39c12;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.spoiler-alert {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.spoiler-icon {
+    font-size: 16px;
+}
+
+/* 메인 페이지 리뷰 내용 블러 처리 */
+.review-content-main.spoiler-hidden-main {
+    filter: blur(4px);
+    pointer-events: none;
+    user-select: none;
+    transition: filter 0.3s ease;
+    padding: 15px;
+}
+
+/* 메인 페이지 리뷰 이미지 스타일 */
+.review-images-main {
+    margin-top: 10px;
+}
+
+.image-preview {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.review-image-thumb {
+    width: 50px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+    .spoiler-warning-main {
+        padding: 6px 10px;
+    }
+
+    .spoiler-alert {
+        font-size: 13px;
+        gap: 6px;
+    }
+
+    .btn-spoiler-toggle-main {
+        padding: 3px 8px;
+        font-size: 11px;
+    }
+
+    .review-image-thumb {
+        width: 40px;
+        height: 32px;
+    }
+}
+
+/* 기존 리뷰 카드 스타일과 조화 */
+.review-card {
+    position: relative;
+}
+
+.review-card .spoiler-warning-main {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+    margin-bottom: 0;
+    padding: 6px 10px;
+}
+
+/* 스포일러가 있는 리뷰 카드 표시 */
+.review-card[data-review-id] .review-content-main.spoiler-hidden-main::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.1);
+    pointer-events: none;
+    z-index: 1;
+    padding: 15px;
 }
