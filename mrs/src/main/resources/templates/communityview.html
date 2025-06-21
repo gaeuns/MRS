@@ -60,7 +60,7 @@
 <!--                                 th:alt="${post.user.userId}" class="author-avatar">-->
                             <div class="author-details">
                                 <span class="author-name" th:text="${post.user.userId}">작성자</span>
-                                <span class="post-date" th:text="${#temporals.format(post.create_Date, 'yyyy년 MM월 dd일')}">2023년 06월 01일</span>
+                                <span class="post-date" th:text="${#temporals.format(post.createDate, 'yyyy년 MM월 dd일')}">2023년 06월 01일</span>
                             </div>
                         </div>
                         <div class="post-stats">
@@ -108,7 +108,7 @@
                         </div>
 
                         <!-- 신고 버튼 (다른 사용자의 글일 때) -->
-                        <div th:if="${session.user != null and session.user.userId != post.user.userId}">
+                        <div th:if="${session.user != null and (session.user.userId != post.user.userId and session.user.userId != 'admin')}">
                             <button class="btn btn-report" onclick="reportPost()">신고</button>
                         </div>
                     </div>
@@ -161,7 +161,7 @@
 <!--                                 th:alt="${comment.author.userName}" class="commenter-avatar">-->
                             <div class="commenter-info">
                                 <span class="commenter-name" th:text="${comment.user.userId}">댓글 작성자</span>
-                                <span class="comment-date" th:text="${#temporals.format(comment.create_Date, 'yyyy.MM.dd')}">2023.06.01 15:30</span>
+                                <span class="comment-date" th:text="${#temporals.format(comment.createDate, 'yyyy.MM.dd')}">2023.06.01 15:30</span>
                             </div>
                             <div class="comment-actions">
                                 <!-- 댓글 작성자만 수정/삭제 가능 -->

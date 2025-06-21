@@ -1,6 +1,8 @@
 package com.example.mrs.controller;
 
 
+
+
 import com.example.mrs.Service.CommunityCommentService;
 import com.example.mrs.dto.CommunityWriteDTO;
 import com.example.mrs.dto.UserDTO;
@@ -31,30 +33,18 @@ public class CommunityController {
 
 
     @GetMapping("/community")
-    public String communityPage(@RequestParam(required = false) String category, Model model) {
-        List<Community> posts;
+    public String communityPage(@RequestParam(defaultValue = "ALL") String category,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String sort, Model model) {
 
-        if ("DISCUSSION".equals(category)) {
-            posts = communityrepository.findByCategory("DISCUSSION");
-        }
-        else if ("QUESTION".equals(category)) {
-            posts = communityrepository.findByCategory("QUESTION");
-        }
-        else if ("RECOMMENDATION".equals(category)) {
-            posts = communityrepository.findByCategory("RECOMMENDATION");
-        }
-        else if("SPOILER".equals(category))
-        {
-            posts = communityrepository.findByCategory("SPOILER");
-        }
-        else {
-            posts = communityrepository.findAll();
-        }
+
+        List<Community> posts = communityrepository.CommunityList(category, keyword, sort);
 
         model.addAttribute("posts", posts);
         model.addAttribute("category", category);
         return "community";
     }
+
 
 
 
@@ -91,7 +81,7 @@ public class CommunityController {
         community.setTitle(dto.getTitle());
         community.setContent(dto.getContent());
         community.setCategory(dto.getCategory());
-        community.setCreate_Date(LocalDate.now());
+        community.setCreateDate(LocalDate.now());
         community.setUser(user);
 
         communityrepository.save(community);
