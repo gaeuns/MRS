@@ -22,7 +22,7 @@ public class User {
     @Transient
     private String confirmPassword;
 
-    // ✅ 사용자 권한 (기본값: USER)
+    //  사용자 권한 기본값 = USER
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole userRole = UserRole.USER;

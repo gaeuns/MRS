@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>공지사항 상세</title>
+
+  <!-- 메인 및 게시판 전용 CSS 연결 -->
+  <link rel="stylesheet" th:href="@{/main.css}">
+  <link rel="stylesheet" th:href="@{/board.css}">
+
+  <!-- 상세 화면 전용 스타일 추가 -->
+  <style>
+    .post-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .meta-left {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .meta-right {
+      display: flex;
+      gap: 10px;
+    }
+    .meta-right form {
+      display: inline;
+    }
+    .post-image {
+      margin-top: 20px;
+      text-align: center;
+    }
+    .post-image img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- 상단 헤더 영역 -->
+<header class="site-header">
+  <div class="container">
+    <!-- 로고 영역 -->
+    <div class="logo">
+      <h1><a th:href="@{/}">무비리뷰</a></h1>
+    </div>
+
+    <!-- 상단 메뉴 네비게이션 -->
+    <nav class="main-nav">
+      <ul>
+        <li><a th:href="@{/}">홈</a></li>
+        <li><a th:href="@{/movies}">영화</a></li>
+        <li><a th:href="@{/community}">커뮤니티</a></li>
+        <li><a th:href="@{/notice}">공지사항</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<!-- 메인 콘텐츠 영역 -->
+<main class="board-main">
+  <div class="container">
+
+    <!-- 게시글 상세 전체 박스 -->
+    <div class="board-content post-detail">
+
+      <!-- 게시글 상단 제목 및 분류 -->
+      <div class="post-header">
+        <div class="post-category">
+          <!-- 공지/중요 뱃지 표시 -->
+          <span th:classappend="${notice.importance == 'IMPORTANT'} ? 'notice-badge' : 'notice-badge normal'"
+                th:text="${notice.importance == 'IMPORTANT'} ? '중요' : '공지'">공지</span>
+        </div>
+
+        <!-- 공지 제목 -->
+        <h1 class="post-title" th:text="${notice.title}">공지 제목</h1>
+
+        <!-- 작성 정보 (작성자, 날짜, 조회수, 수정/삭제 버튼) -->
+        <div class="post-meta">
+          <div class="meta-left">
+            <span class="author-name" th:text="${notice.author}">작성자</span>
+            <span class="post-date" th:text="${#temporals.format(notice.createdAt, 'yyyy.MM.dd HH:mm')}">작성일</span>
+            <span class="post-views" th:text="'조회수 ' + ${notice.viewCount}">조회수</span>
+          </div>
+
+          <!-- 우측 버튼 영역 (목록, 수정, 삭제) -->
+          <div class="meta-right">
+            <a th:href="@{/notice}" class="btn btn-secondary">목록</a>
+
+            <!-- 관리자만 수정/삭제 가능 -->
+            <div th:if="${sessionUser != null and sessionUser.userRole.name() == 'ADMIN'}">
+              <!-- 수정 버튼 -->
+              <a th:href="@{'/notice/edit/' + ${notice.id}}" class="btn btn-primary">수정</a>
+
+              <!-- 삭제 버튼 (삭제 확인창 띄움) -->
+              <form th:action="@{'/notice/delete/' + ${notice.id}}" method="post"
+                    onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                <button type="submit" class="btn btn-outline">삭제</button>
+              </form>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- 게시글 본문 영역 -->
+      <div class="post-content">
+
+        <!-- 본문 내용 출력 -->
+        <div class="content-body" th:text="${notice.content}">
+          공지 내용입니다.
+        </div>
+
+        <!-- 첨부 이미지 있을 경우 출력 -->
+        <div class="post-image" th:if="${notice.imagePath != null and !#strings.isEmpty(notice.imagePath)}">
+          <img th:src="@{${notice.imagePath}}" alt="첨부 이미지">
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<!-- 푸터 -->
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; 2025 무비리뷰. All rights reserved.</p>
+  </div>
+</footer>
+
+</body>
+</html>

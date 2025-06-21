@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>공지사항 작성</title>
+    <link rel="stylesheet" th:href="@{/main.css}">
+    <link rel="stylesheet" th:href="@{/board.css}">
+    <style>
+        .required {
+            color: red;
+            margin-left: 4px;
+        }
+    </style>
+</head>
+<body>
+<header class="site-header">
+    <div class="container">
+        <div class="logo">
+            <h1><a th:href="@{/}">무비리뷰</a></h1>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a th:href="@{/}">홈</a></li>
+                <li><a th:href="@{/movies}">영화</a></li>
+                <li><a th:href="@{/community}">커뮤니티</a></li>
+                <li><a th:href="@{/notice}">공지사항</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main class="board-main">
+    <div class="container">
+        <h2>공지사항 작성</h2>
+        <form th:action="@{/notice/write}" method="post" enctype="multipart/form-data" class="write-form">
+
+            <!-- 중요도 (드롭다운) -->
+            <div class="form-group">
+                <label class="form-label">중요도<span class="required">*</span></label>
+                <select name="importance" class="form-input" required>
+                    <option value="">-- 중요도 선택 --</option>
+                    <option value="IMPORTANT">중요</option>
+                    <option value="NORMAL">일반</option>
+                </select>
+            </div>
+
+            <!-- 제목 -->
+            <div class="form-group">
+                <label class="form-label">제목 <span class="required">*</span></label>
+                <input type="text" name="title" class="form-input" required>
+            </div>
+
+            <!-- 내용 -->
+            <div class="form-group">
+                <label class="form-label">내용 <span class="required">*</span></label>
+                <textarea name="content" class="form-textarea" required></textarea>
+            </div>
+
+            <!-- 이미지 첨부 -->
+            <div class="form-group">
+                <label class="form-label">첨부 이미지</label>
+                <input type="file" name="imageFile" class="form-input" accept="image/*">
+            </div>
+
+            <!-- 작성자 -->
+            <div class="form-group">
+                <label class="form-label">작성자</label>
+                <input type="text" name="author" class="form-input"
+                       th:value="${session.user != null} ? ${session.user.userName} : '익명'" readonly>
+            </div>
+
+            <!-- 버튼 -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">작성하기</button>
+                <a th:href="@{/notice}" class="btn">취소</a>
+            </div>
+        </form>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <div class="container">
+        <p>&copy; 2025 무비리뷰. All rights reserved.</p>
+    </div>
+</footer>
+</body>
+</html>
