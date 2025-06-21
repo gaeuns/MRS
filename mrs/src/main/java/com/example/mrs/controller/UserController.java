@@ -99,7 +99,7 @@ public class UserController {
         if (session != null) {
             session.invalidate();
         }
-        return "main";
+        return "redirect:/";
     }
 
     //마이페이지
