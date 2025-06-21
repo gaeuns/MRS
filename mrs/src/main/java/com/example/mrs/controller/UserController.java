@@ -80,7 +80,4 @@ public class UserController {
         }
         return "main";
     }
-
-    //마이페이지
-
 }
