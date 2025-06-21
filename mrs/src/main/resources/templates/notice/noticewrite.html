@@ -3,8 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>공지사항 작성</title>
+
+    <!-- 공통 스타일 연결 -->
     <link rel="stylesheet" th:href="@{/main.css}">
     <link rel="stylesheet" th:href="@{/board.css}">
+
+    <!-- 필수 항목 표시 스타일 -->
     <style>
         .required {
             color: red;
@@ -12,12 +16,18 @@
         }
     </style>
 </head>
+
 <body>
+
+<!-- 상단 헤더 영역 -->
 <header class="site-header">
     <div class="container">
+        <!-- 로고 -->
         <div class="logo">
             <h1><a th:href="@{/}">무비리뷰</a></h1>
         </div>
+
+        <!-- 상단 메뉴 -->
         <nav class="main-nav">
             <ul>
                 <li><a th:href="@{/}">홈</a></li>
@@ -29,16 +39,17 @@
     </div>
 </header>
 
+<!-- 메인 컨텐츠 영역 -->
 <main class="board-main">
     <div class="container">
+        <!-- 페이지 제목 -->
         <h2>공지사항 작성</h2>
-<<<<<<< HEAD
-        <form th:action="@{/notice/write}" method="post" enctype="multipart/form-data" class="write-form">
-=======
-        <form th:action="@{/notice/write}" method="post" class="write-form">
->>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
 
-            <!-- 중요도 (드롭다운) -->
+        <!-- 공지 작성 폼 -->
+        <form th:action="@{/notice/write}" method="post" enctype="multipart/form-data" class="write-form">
+            <!-- 파일 첨부를 위해 enctype="multipart/form-data" 반드시 설정 -->
+
+            <!-- 중요도 선택 드롭다운 -->
             <div class="form-group">
                 <label class="form-label">중요도<span class="required">*</span></label>
                 <select name="importance" class="form-input" required>
@@ -48,35 +59,32 @@
                 </select>
             </div>
 
-            <!-- 제목 -->
+            <!-- 제목 입력 -->
             <div class="form-group">
                 <label class="form-label">제목 <span class="required">*</span></label>
                 <input type="text" name="title" class="form-input" required>
             </div>
 
-            <!-- 내용 -->
+            <!-- 내용 입력 -->
             <div class="form-group">
                 <label class="form-label">내용 <span class="required">*</span></label>
                 <textarea name="content" class="form-textarea" required></textarea>
             </div>
 
-<<<<<<< HEAD
             <!-- 이미지 첨부 -->
             <div class="form-group">
                 <label class="form-label">첨부 이미지</label>
                 <input type="file" name="imageFile" class="form-input" accept="image/*">
             </div>
 
-=======
->>>>>>> ef1b919951c19ce97bbfeaffacf47abcde7169ae
-            <!-- 작성자 -->
+            <!-- 작성자 (자동 세션에서 입력됨, 읽기전용) -->
             <div class="form-group">
                 <label class="form-label">작성자</label>
                 <input type="text" name="author" class="form-input"
                        th:value="${session.user != null} ? ${session.user.userName} : '익명'" readonly>
             </div>
 
-            <!-- 버튼 -->
+            <!-- 작성/취소 버튼 -->
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">작성하기</button>
                 <a th:href="@{/notice}" class="btn">취소</a>
@@ -85,10 +93,12 @@
     </div>
 </main>
 
+<!-- 푸터 영역 -->
 <footer class="site-footer">
     <div class="container">
         <p>&copy; 2025 무비리뷰. All rights reserved.</p>
     </div>
 </footer>
+
 </body>
 </html>
