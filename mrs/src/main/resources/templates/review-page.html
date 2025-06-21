@@ -93,7 +93,8 @@
 
           <!-- 리뷰 액션 버튼 -->
           <div class="review-actions">
-            <div th:if="${session.user != null and hasMyReview}" class="author-actions">
+            <div th:if="${session.user != null and (hasMyReview or session.user.userId == 'admin')}"
+                 class="author-actions">
               <a th:href="@{/movies/{id}/review(id=${review.movie.id})}"
                  class="btn btn-edit">
                 <span>✏️</span> 수정
@@ -191,8 +192,7 @@
                 </div>
               </div>
 
-                <!-- 본인만 수정/삭제 버튼 노출 -->
-              <div th:if="${session.user != null and session.user.userId == comment.authorUserId}" class="comment-actions">
+              <div th:if="${session.user != null and (session.user.userId == comment.authorUserId or session.user.userId == 'admin')}" class="comment-actions">
                 <button type="button" onclick="editComment(this)">수정</button>
 
                 <!-- 삭제 버튼은 form으로 감싸고 JS로 submit -->

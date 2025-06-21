@@ -9,15 +9,12 @@ import com.example.mrs.entity.UserReview;
 import com.example.mrs.repository.*;
 import com.example.mrs.service.ReviewCommentService;
 import jakarta.servlet.http.HttpSession;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -199,20 +196,23 @@ public class ReviewController {
         Movie movie = movieRepository.findById(movieId).orElseThrow();
         Review review = reviewRepository.findById(reviewId).orElseThrow();
 
-        movie.setReviewCount(movie.getReviewCount() - 1);
+        int newReviewCount = movie.getReviewCount() - 1;
 
-        if (movie.getReviewCount() == 0) {
-            movie.setAverageRating(0);
+        if (newReviewCount == 0) {
+            movie.setReviewCount(0);
             movie.setReviewSum(0);
+            movie.setAverageRating(0);
         } else {
+            movie.setReviewCount(newReviewCount);
             movie.setReviewSum(movie.getReviewSum() - review.getRating());
-            movie.setAverageRating(movie.getReviewSum() / movie.getReviewCount());
+            movie.setAverageRating(movie.getReviewSum() / newReviewCount);
         }
 
         movieRepository.save(movie);
         reviewRepository.delete(review);
 
-        return "review-page";
+        return "redirect:/movie-page/" + movieId;
     }
+
 
 }

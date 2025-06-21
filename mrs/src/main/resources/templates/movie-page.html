@@ -108,10 +108,10 @@
                     <a th:if="${session.user != null and !hasMyReview}"
                        th:href="@{/movies/{id}/review(id=${movie.id})}"
                        class="btn btn-primary btn-large">
-                    <span>✍️</span> 리뷰 작성
+                        <span>✍️</span> 리뷰 작성
                     </a>
                     <a th:if="${session.user != null and hasMyReview}"
-                        th:href="@{/movies/{id}/review(id=${movie.id})}"
+                       th:href="@{/movies/{id}/review(id=${movie.id})}"
                        class="btn btn-primary btn-large">
                         <span>✍️</span> 리뷰 수정
                     </a>
@@ -138,7 +138,19 @@
             </div>
 
             <div class="reviews-list">
-                <div th:each="review : ${review}" class="review-item">
+                <div th:each="review : ${review}" class="review-item" th:data-review-id="${review.id}">
+                    <!-- 스포일러 경고 -->
+                    <div th:if="${review.hasSpoiler}" class="spoiler-warning">
+                        <div class="spoiler-icon">⚠️</div>
+                        <div class="spoiler-text">
+                            <strong>스포일러 주의!</strong>
+                            <p>이 리뷰에는 영화의 스포일러가 포함되어 있습니다.</p>
+                        </div>
+                        <button class="btn btn-spoiler-toggle" th:onclick="'toggleSpoiler(' + ${review.id} + ')'">
+                            스포일러 보기
+                        </button>
+                    </div>
+
                     <a th:href="@{/review-page/{id}(id=${review.id})}">
                         <div class="review-header">
                             <div class="reviewer-info">
@@ -172,11 +184,15 @@
                                 </form>
                             </div>
                         </div>
-                        <div class="review-content" th:classappend="${review.hasSpoiler} ? 'spoiler-hidden'">
-                        <h4 class="review-title" th:text="${review.title}">리뷰 제목</h4>
-                            <p th:text="${review.description}">
-                                리뷰 내용이 여기에 표시됩니다. 영화에 대한 상세한 감상과 평가가 포함됩니다.
-                            </p>
+
+                        <!-- 리뷰 내용 -->
+                        <div class="review-content" th:class="${review.hasSpoiler} ? 'review-content spoiler-hidden' : 'review-content'">
+                            <h4 class="review-title" th:text="${review.title}">리뷰 제목</h4>
+                            <div class="content-body">
+                                <p th:text="${review.description}">
+                                    리뷰 내용이 여기에 표시됩니다. 영화에 대한 상세한 감상과 평가가 포함됩니다.
+                                </p>
+                            </div>
                         </div>
                     </a>
                 </div>
@@ -222,5 +238,22 @@
         <p>&copy; 2025 Spring Boot Project</p>
     </div>
 </footer>
+
+<script>
+    // 스포일러 토글 함수
+    function toggleSpoiler(reviewId) {
+        const reviewItem = document.querySelector(`[data-review-id="${reviewId}"]`);
+        const content = reviewItem.querySelector('.review-content');
+        const button = reviewItem.querySelector('.btn-spoiler-toggle');
+
+        if (content.classList.contains('spoiler-hidden')) {
+            content.classList.remove('spoiler-hidden');
+            button.textContent = '스포일러 숨기기';
+        } else {
+            content.classList.add('spoiler-hidden');
+            button.textContent = '스포일러 보기';
+        }
+    }
+</script>
 </body>
 </html>

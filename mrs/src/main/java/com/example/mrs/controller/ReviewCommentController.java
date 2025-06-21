@@ -2,7 +2,6 @@ package com.example.mrs.controller;
 
 import com.example.mrs.dto.ReviewCommentDTO;
 import com.example.mrs.dto.UserDTO;
-import com.example.mrs.entity.Movie;
 import com.example.mrs.entity.Review;
 import com.example.mrs.repository.ReviewRepository;
 import com.example.mrs.repository.UserRepository;

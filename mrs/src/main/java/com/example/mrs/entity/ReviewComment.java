@@ -15,7 +15,6 @@ public class ReviewComment {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private Review review;
 
     @ManyToOne(fetch = FetchType.LAZY)

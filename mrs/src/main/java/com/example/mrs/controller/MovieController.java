@@ -5,10 +5,8 @@ import com.example.mrs.entity.Movie;
 import com.example.mrs.entity.Review;
 import com.example.mrs.repository.MovieRepository;
 import com.example.mrs.repository.ReviewRepository;
-import com.example.mrs.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +25,6 @@ import java.util.*;
 public class MovieController {
     private final MovieRepository movieRepository;
     private final ReviewRepository reviewRepository;
-    private final UserRepository userRepository;
 
     //영화 목록
     @GetMapping("/movies")
@@ -89,15 +86,20 @@ public class MovieController {
         return "movie-register";
     }
 
-    @SneakyThrows
     @PostMapping("/addmovie")
-    public String addMovie(@ModelAttribute("movies") Movie movie, @RequestParam("posterFile") MultipartFile posterFile,
-                           Model model) throws IOException {
+    public String addMovie(@ModelAttribute("movies") Movie movie,
+                           @RequestParam("posterFile") MultipartFile posterFile,
+                           Model model) {
 
         String uploadDir = new File("uploads").getAbsolutePath();
         String fileName = UUID.randomUUID() + "_" + posterFile.getOriginalFilename();
         File destination = new File(uploadDir, fileName);
-        posterFile.transferTo(destination);
+
+        try {
+            posterFile.transferTo(destination);
+        } catch (IOException e) {
+            throw new RuntimeException("파일 업로드 실패", e);
+        }
 
         movie.setPosterUrl("/uploads/" + fileName);
 
