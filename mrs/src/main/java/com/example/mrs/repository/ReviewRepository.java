@@ -1,6 +1,5 @@
 package com.example.mrs.repository;
 
-import com.example.mrs.dto.UserDTO;
 import com.example.mrs.entity.Movie;
 import com.example.mrs.entity.Review;
 import com.example.mrs.entity.User;

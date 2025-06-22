@@ -1,4 +1,4 @@
-package com.example.mrs.service;
+package com.example.mrs.Service;
 
 import com.example.mrs.dto.ReviewCommentDTO;
 import com.example.mrs.entity.Review;
