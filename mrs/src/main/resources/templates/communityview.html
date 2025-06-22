@@ -19,9 +19,8 @@
             <ul>
                 <li><a th:href="@{/}">홈</a></li>
                 <li><a th:href="@{/movies}">영화</a></li>
-                <li><a th:href="@{/reviews}">리뷰</a></li>
-                <li><a th:href="@{/rankings}">랭킹</a></li>
-                <li><a th:href="@{/community}" class="active">커뮤니티</a></li>
+                <li><a th:href="@{/community}">커뮤니티</a></li>
+                <li><a th:href="@{/notice}">공지사항</a></li>
             </ul>
         </nav>
         <div class="user-actions">
@@ -49,7 +48,6 @@
                     <div class="post-category">
                         <span class="category-badge" th:text="${post.category}" th:classappend="${post.category}">자유토론</span>
                         <span th:if="${post.isNew()}" class="badge new">NEW</span>
-<!--                        <span th:if="${post.isHot()}" class="badge hot">HOT</span>-->
                     </div>
 
                     <h1 class="post-title" th:text="${post.title}">게시글 제목</h1>
@@ -228,7 +226,7 @@
 
 <footer class="site-footer">
     <div class="container">
-        <p>&copy; 2023 무비리뷰. All rights reserved.</p>
+        <p>&copy; 2025 Spring Boot Project</p>
     </div>
 </footer>
 
