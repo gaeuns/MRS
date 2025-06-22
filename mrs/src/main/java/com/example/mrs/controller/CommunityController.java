@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /*
@@ -111,7 +112,7 @@ public class CommunityController {
         community.setTitle(dto.getTitle());
         community.setContent(dto.getContent());
         community.setCategory(dto.getCategory());
-        community.setCreateDate(LocalDate.now()); // 현재 날짜로 생성일 설정
+        community.setCreateDate(LocalDateTime.now()); // 현재 날짜로 생성일 설정
         community.setUser(user); // 작성자 설정
 
         // 게시글 저장
