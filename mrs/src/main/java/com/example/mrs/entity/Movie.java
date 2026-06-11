@@ -26,8 +26,8 @@ public class Movie {
     private MultipartFile posterFile;
     private String trailerUrl;
     private String category;
-    private int reviewSum;
-    private int averageRating;
+    private double reviewSum;
+    private double averageRating;
     private int reviewCount;
     private int runtime;
     private String country;

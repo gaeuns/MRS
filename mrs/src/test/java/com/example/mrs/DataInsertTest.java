@@ -65,11 +65,11 @@ public class DataInsertTest {
                 .toList();
 
         // 영화 삽입 5개
-        createMovie("어벤져스: 엔드게임", "액션", "안소니 루소", "2019-04-26", "/uploads/avengers.jpg", 181, "어벤져스의 마지막 전투가 시작된다.");
+        createMovie("어벤져스: 엔드게임", "action", "안소니 루소", "2019-04-26", "/uploads/avengers.jpg", 181, "어벤져스의 마지막 전투가 시작된다.");
         createMovie("인셉션", "SF", "크리스토퍼 놀란", "2010-07-16", "/uploads/inception.jpg", 148, "꿈 속의 꿈, 복잡한 스토리의 SF 명작.");
-        createMovie("라라랜드", "로맨스", "데이미언 셔젤", "2016-12-09", "/uploads/lalaland.jpg", 128, "꿈을 쫓는 두 남녀의 사랑 이야기.");
+        createMovie("라라랜드", "romance", "데이미언 셔젤", "2016-12-09", "/uploads/lalaland.jpg", 128, "꿈을 쫓는 두 남녀의 사랑 이야기.");
         createMovie("인터스텔라", "SF", "크리스토퍼 놀란", "2014-11-07", "/uploads/interstellar.jpg", 169, "우주를 넘나드는 시간과 공간의 대서사시.");
-        createMovie("겨울왕국", "애니메이션", "크리스 벅", "2013-11-27", "/uploads/frozen.jpg", 102, "엘사의 마법과 안나의 모험, 겨울왕국의 이야기.");
+        createMovie("겨울왕국", "animation", "크리스 벅", "2013-11-27", "/uploads/frozen.jpg", 102, "엘사의 마법과 안나의 모험, 겨울왕국의 이야기.");
 
         List<Movie> movies = movieRepository.findAll();
 

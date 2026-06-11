@@ -137,7 +137,7 @@
                     <a th:href="@{/review-page/{id}(id=${review.id})}" class="btn btn-sm">상세보기</a>
                     <a th:href="@{/movies/{id}/review(id=${review.movie.id})}" class="btn btn-sm btn-outline">수정</a>
                     <form th:action="@{/movies/{movieId}/review/{reviewId}/delete(movieId=${review.movie.id}, reviewId=${review.id})}"
-                          method="post" style="display: inline;">
+                          method="get" style="display: inline;">
                       <button type="submit" class="btn btn-sm btn-danger"
                               onclick="return confirm('정말로 이 리뷰를 삭제하시겠습니까?')">삭제</button>
                     </form>

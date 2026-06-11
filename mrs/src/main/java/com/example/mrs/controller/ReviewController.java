@@ -53,28 +53,36 @@ public class ReviewController {
     }
 
     @PostMapping("/movies/{movieId}/review")
-    public String addReview(@PathVariable Long movieId, Review review, HttpSession session) {
-        // 1. 영화 엔티티 조회
+    public String addOrUpdateReview(@PathVariable Long movieId, Review review, HttpSession session) {
         Movie movie = movieRepository.findById(movieId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 영화 없음"));
 
-        // 2. 세션에서 로그인 유저 정보 꺼내기
         UserDTO userDTO = (UserDTO) session.getAttribute("user");
         User user = userRepository.findByUserId(userDTO.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("유저 없음"));
 
-        // 3. 리뷰에 유저와 영화 정보 set
-        review.setUser(user);
-        review.setMovie(movie);
+        // 작성자+영화 기준 기존 리뷰 조회
+        Review existingReview = reviewRepository.findFirstByMovieAndUser(movie, user).orElse(null);
 
-        // 4. 리뷰 저장
-        reviewRepository.save(review);
+        if (existingReview != null) {
+            // 기존 리뷰 수정
+            existingReview.setRating(review.getRating());
+            existingReview.setTitle(review.getTitle());
+            existingReview.setDescription(review.getDescription());
+            existingReview.setHasSpoiler(review.isHasSpoiler());
+            reviewRepository.save(existingReview);
+        } else {
+            // 신규 리뷰 작성
+            review.setUser(user);
+            review.setMovie(movie);
+            reviewRepository.save(review);
 
-        // 5. 리뷰 저장 후 → 해당 영화 리뷰 카운트 증가, 평균 별점 계산 후 저장
-        movie.setReviewCount(movie.getReviewCount() + 1);
-        movie.setReviewSum(movie.getReviewSum() + review.getRating());
-        movie.setAverageRating(movie.getReviewSum() / movie.getReviewCount());
-        movieRepository.save(movie);
+            // 리뷰 통계 갱신
+            movie.setReviewCount(movie.getReviewCount() + 1);
+            movie.setReviewSum(movie.getReviewSum() + review.getRating());
+            movie.setAverageRating(movie.getReviewSum() / movie.getReviewCount());
+            movieRepository.save(movie);
+        }
 
         return "redirect:/movie-page/" + movieId;
     }
@@ -197,7 +205,7 @@ public class ReviewController {
     }
 
     //리뷰 삭제
-    @PostMapping("/movies/{movieId}/review/{reviewId}/delete")
+    @GetMapping("/movies/{movieId}/review/{reviewId}/delete")
     public String deleteReview(@PathVariable long movieId, @PathVariable long reviewId) {
         Movie movie = movieRepository.findById(movieId).orElseThrow();
         Review review = reviewRepository.findById(reviewId).orElseThrow();

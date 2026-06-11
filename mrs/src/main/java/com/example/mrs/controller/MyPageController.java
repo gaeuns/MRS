@@ -119,18 +119,22 @@ public class MyPageController {
         User user = userRepository.findByUserId(userDTO.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
 
-        //User 테이블 탈퇴 표시
+        // User 테이블 탈퇴 표시
         user.setWithdrawal(true);
         userRepository.save(user);
 
-        //ReviewComment 테이블에서도 해당 유저가 작성한 댓글 전부 수정
+        // ReviewComment 테이블에서도 해당 유저가 작성한 댓글 전부 수정
         List<ReviewComment> comments = reviewCommentRepository.findByUser_UserId(user.getUserId());
         for (ReviewComment comment : comments) {
             comment.setWithdrawal(true);
         }
         reviewCommentRepository.saveAll(comments);
 
+        // ✅ 세션에서 유저 정보 삭제 → 자동 로그아웃 효과
+        session.removeAttribute("user");
+
         return "redirect:/";
     }
+
 
 }
